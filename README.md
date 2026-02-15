@@ -1,61 +1,73 @@
-# Warhammer 40k Solo Combat Patrol
+# React + TypeScript + Vite
 
-An LLM-powered AI opponent for solo Warhammer 40k Combat Patrol games. Practice and learn the game by playing against an AI that understands the rules, makes tactical decisions, and can explain its reasoning.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Concept
+Currently, two official plugins are available:
 
-Instead of reinforcement learning or random dice tables, this project uses an LLM agent as the opposing player. The AI:
-- Knows the Combat Patrol rules and datasheets
-- Makes tactical decisions (movement, targeting, stratagem usage)
-- Tracks game state (positions, wounds, CP, VP, objectives)
-- Explains its reasoning to help you learn
-- Enforces rules and catches mistakes
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Scope (v0)
+## React Compiler
 
-**Space Marines (Strike Force Octavius) vs Tyranids (Vardenghast Swarm)**
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-Starting with the two most iconic Combat Patrol matchups from the 10th Edition starter set.
+## Expanding the ESLint configuration
 
-## Architecture
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-The app is a **web-based game manager** with:
-- A grid-based battlefield representation (44" x 30")
-- Game state engine that tracks all units, wounds, positions, CP, VP
-- Turn/phase sequencer following the Combat Patrol flow
-- LLM agent that receives game state and returns decisions for the AI army
-- Human player interface for declaring actions (move, shoot, charge, fight)
-- Dice roller with full modifier calculation
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-## Tech Stack
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-- **Frontend:** React + TypeScript (Vite)
-- **Backend:** Node.js/Express API
-- **AI:** LLM via API (OpenAI/Anthropic) with structured game state prompts
-- **State:** In-memory game state (no DB needed for v0)
-
-## Getting Started
-
-```bash
-npm install
-npm run dev
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-## Combat Patrols Supported
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-### Strike Force Octavius (Space Marines)
-- Captain Octavius (Terminator, relic weapon)
-- Librarian Tantus (Terminator, Smite, force weapon)
-- Terminator Squad (5 models, assault cannon + storm bolters)
-- Infernus Squad (5 models, pyreblasters)
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-### The Vardenghast Swarm (Tyranids)
-- Terror of Vardenghast (Winged Tyranid Prime)
-- Psychophage (Monster, psychoclastic torrent)
-- Termagants (20 models, fleshborers)
-- Barbgaunts (5 models, barblaunchers)
-- Von Ryan's Leapers (3 models, melee assassins)
-
-## Status
-
-🚧 **In Development**
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
