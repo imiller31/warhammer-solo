@@ -1,148 +1,97 @@
 # CLAUDE.md - Project Guide
 
-## Project: Warhammer 40k Solo Combat Patrol AI
+## Project: Warhammer 40k Solo Combat Patrol Companion App
 
-### What This Is
-A web app where a human plays Warhammer 40k Combat Patrol against an LLM-powered AI opponent. The AI controls one army, the human controls the other. Game state is tracked programmatically.
+A web companion app for playing Warhammer 40k Combat Patrol solo. Based on One Page Rules' AI solo play concept — decision tables and flowcharts that tell you what the AI opponent does each phase — but tailored specifically for 40k 10th Edition Combat Patrol.
+
+### What This Is NOT
+- Not an LLM-powered opponent (too expensive, too slow)
+- Not a full digital game (you play with real minis on the table)
+- Not a rules engine that resolves combat for you
+
+### What This IS
+A companion app you use alongside your physical game. It tells you:
+- What the AI opponent's units do each phase (movement, shooting, charging, fighting)
+- Which stratagems the AI uses and when
+- How the AI deploys
+- Which targets the AI prioritizes
+- VP/CP tracking
 
 ### Architecture
 
+Simple React SPA (Vite + TypeScript). No backend needed for v0.
+
 ```
-┌─────────────────────────────────────┐
-│         React Frontend (Vite)       │
-│  - Battlefield grid (44x30 inches)  │
-│  - Unit cards & status              │
-│  - Phase tracker / action buttons   │
-│  - Dice roll display                │
-│  - Chat/explanation panel           │
-└──────────────┬──────────────────────┘
-               │ REST/WebSocket
-┌──────────────▼──────────────────────┐
-│         Express Backend             │
-│  - Game state engine                │
-│  - Rules engine (phases, combat)    │
-│  - Dice roller with modifiers       │
-│  - LLM integration for AI turns     │
-└─────────────────────────────────────┘
-```
-
-### Game State Model
-
-```typescript
-interface GameState {
-  turn: number;              // 1-5
-  phase: Phase;              // command | movement | shooting | charge | fight
-  activePlayer: 'attacker' | 'defender';
-  
-  armies: {
-    attacker: Army;
-    defender: Army;
-  };
-  
-  battlefield: {
-    width: 44;   // inches
-    height: 30;  // inches
-    objectives: Objective[];
-    terrain: TerrainFeature[];
-  };
-  
-  cp: { attacker: number; defender: number };
-  vp: { attacker: number; defender: number };
-  oathOfMomentTarget?: string;  // SM faction ability
-  shadowInTheWarpUsed: boolean; // Tyranid faction ability
-  
-  mission: Mission;
-  securedObjectives: Record<string, 'attacker' | 'defender' | null>;
-}
-
-interface Unit {
-  id: string;
-  name: string;
-  faction: 'space_marines' | 'tyranids';
-  models: Model[];
-  position: { x: number; y: number };
-  hasMoved: boolean;
-  hasShot: boolean;
-  hasFought: boolean;
-  hasCharged: boolean;
-  battleShocked: boolean;
-  attachedLeader?: string;
-  keywords: string[];
-}
-
-interface Model {
-  id: string;
-  name: string;
-  m: number; oc: number; t: number; sv: number; w: number; ld: number;
-  currentWounds: number;
-  rangedWeapons: Weapon[];
-  meleeWeapons: Weapon[];
-  abilities: string[];
-  invulnSave?: number;
-  feelNoPain?: number;
-}
+src/
+  data/
+    space-marines.ts    # Strike Force Octavius units, weapons, stratagems
+    tyranids.ts         # Vardenghast Swarm units, weapons, stratagems
+    missions.ts         # Combat Patrol missions
+  engine/
+    ai-behavior.ts      # Decision tables / flowcharts for AI behavior
+    phase-sequencer.ts  # Tracks current turn/phase, advances game
+    scoring.ts          # VP tracking
+    cp-tracker.ts       # Command point tracking
+  components/
+    GameBoard.tsx        # Main game view
+    PhaseTracker.tsx     # Shows current turn/phase with navigation
+    UnitCard.tsx         # Unit status (wounds, battleshock, etc.)
+    AIDecision.tsx       # Shows what the AI does this phase with reasoning
+    ScoreBoard.tsx       # VP/CP display
+    DiceRoller.tsx       # Quick dice roller utility
+  App.tsx
 ```
 
-### Data Files Needed
-Create JSON data files for:
-1. `data/space-marines.json` - Strike Force Octavius units, weapons, abilities, stratagems, enhancements
-2. `data/tyranids.json` - Vardenghast Swarm units, weapons, abilities, stratagems, enhancements  
-3. `data/missions.json` - All 6 Combat Patrol missions
-4. `data/core-rules.json` - Core stratagems, weapon abilities reference
+### AI Behavior System (OPR-inspired)
 
-### Key Rules to Implement
-- **Phases:** Command → Movement → Shooting → Charge → Fight (per player turn)
-- **Oath of Moment:** SM picks enemy unit at start of Command phase, re-roll hits vs that target
-- **Synapse:** Tyranid units within 6" of Synapse models take battleshock on 3D6
-- **Shadow in the Warp:** Once per battle, all enemy units take battleshock test
-- **Engagement Range:** 1" horizontal, 5" vertical
-- **Objective Control:** Sum of OC values of non-battleshocked models within 3"
-- **Securing:** Battleline units lock objectives under your control
+Each unit gets a **role** that determines its behavior:
 
-### LLM AI Prompt Design
-The AI receives:
-1. Current game state (JSON)
-2. Available actions for this phase
-3. Rules context for the current phase
-4. Its army's stratagems and abilities
+**Roles:**
+- **Aggressive** — prioritize attacking, move toward nearest enemy, charge when possible
+- **Defensive** — hold position/objective, shoot at nearest threat, avoid charges
+- **Flanker** — move toward exposed/weak units, prefer charges over shooting
+- **Support** — stay near friendly units, buff/screen, shoot at nearest target
+- **Objective** — prioritize moving to/holding unclaimed objectives
 
-It returns structured JSON:
-```json
-{
-  "action": "move",
-  "unitId": "termagants_1",
-  "target": { "x": 22, "y": 15 },
-  "reasoning": "Moving Termagants to contest the central objective while staying within Synapse range of the Terror of Vardenghast."
-}
-```
+**Per-phase decision flow:**
+1. **Command Phase:** Auto-resolve battleshock, gain CP, faction abilities (Oath of Moment target selection, Shadow in the Warp timing)
+2. **Movement Phase:** Based on role → determine destination (nearest enemy, nearest objective, hold position, etc.)
+3. **Shooting Phase:** Target priority table (nearest in range > wounded > highest threat)
+4. **Charge Phase:** Role-dependent (aggressive/flanker charge, defensive/support don't unless engaged)
+5. **Fight Phase:** Attack allocation based on weapon profiles vs target toughness
 
-### Phase 1 (MVP)
-- [ ] Project scaffolding (Vite + Express)
-- [ ] Data files for both combat patrols
-- [ ] Game state engine with phase sequencer
-- [ ] Dice rolling with all modifiers
-- [ ] Basic grid battlefield display
-- [ ] Human player can move, shoot, charge, fight
-- [ ] LLM makes decisions for AI army
-- [ ] VP scoring for "Clash of Patrols" mission
+**Stratagem triggers:** Condition-based. E.g., "If a unit is targeted by shooting and has >3 models, use Hyper-Reactive (1CP)."
 
-### Phase 2
-- [ ] All 6 missions
-- [ ] Stratagems (both core and faction)
-- [ ] Terrain and cover
-- [ ] Deep Strike / Reserves
-- [ ] Patrol Squads splitting
-- [ ] Enhancement selection
+### Unit Role Assignments
 
-### Phase 3
-- [ ] Coaching mode (AI explains what you should consider)
-- [ ] Undo/replay
-- [ ] Game log export
-- [ ] More faction pairings
+**Tyranids (Vardenghast Swarm):**
+- Terror of Vardenghast → Flanker (Deep Strike assassin)
+- Psychophage → Aggressive (monster that charges in)
+- Termagants → Objective / Defensive (screen and hold)
+- Barbgaunts → Support (shoot to disrupt, stay back)
+- Von Ryan's Leapers → Flanker (Infiltrators, Fights First)
 
-### Reference
-- See `RESEARCH.md` for prior art and links
-- See `data/` for game data (create from wahapedia scrapes)
+**Space Marines (Strike Force Octavius):**
+- Captain Octavius → Aggressive (attached to Terminators)
+- Librarian Tantus → Support (attached to Terminators for Sustained Hits)
+- Terminator Squad → Aggressive (Deep Strike, shoot + charge)
+- Infernus Squad → Defensive / Objective (hold objectives, flame things in range)
+
+### Data Sources
 - Combat Patrol rules: https://wahapedia.ru/wh40k10ed_cp/the-rules/combat-patrol/
-- SM datasheets: https://wahapedia.ru/wh40k10ed_cp/factions/strike-force-octavius/
-- Tyranid datasheets: https://wahapedia.ru/wh40k10ed_cp/factions/the-vardenghast-swarm/
+- SM (Strike Force Octavius): https://wahapedia.ru/wh40k10ed_cp/factions/strike-force-octavius/
+- Tyranids (Vardenghast Swarm): https://wahapedia.ru/wh40k10ed_cp/factions/the-vardenghast-swarm/
+- See RESEARCH.md for prior art
+
+### UI/UX Goals
+- Mobile-friendly (use at the table on your phone)
+- Clear, readable AI decisions ("Move Termagants toward Objective 2. They are in Defensive role — hold and screen.")
+- Step through phases with a button
+- Dice roller built in
+- Dark theme (grimdark vibes)
+
+### Tech
+- React 19 + TypeScript
+- Vite
+- Tailwind CSS
+- No backend, no database — all state in memory/localStorage
