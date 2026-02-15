@@ -34,6 +34,7 @@ function isBelowHalfStrength(unitState: UnitState, profile: UnitProfile): boolea
 
 // ── Deployment Guidance ──────────────────────────────────────────
 
+/** Generates deployment guidance for the AI army at the start of the game. */
 export function generateDeploymentGuidance(state: GameState): AIDecisionResult[] {
   const decisions: AIDecisionResult[] = [];
   const isTyranids = state.aiFaction.id === 'vardenghast-swarm';
@@ -162,7 +163,7 @@ function getTyranidMovement(unit: UnitProfile, unitState: UnitState, state: Game
   return details;
 }
 
-function getTyranidShooting(unit: UnitProfile, unitState: UnitState, _state: GameState, enemies: { profile: UnitProfile; state: UnitState }[]): string[] {
+function getTyranidShooting(unit: UnitProfile, unitState: UnitState, enemies: { profile: UnitProfile; state: UnitState }[]): string[] {
   const details: string[] = [];
   const rangedWeapons = unit.weapons.filter((w) => w.range !== 'Melee');
 
@@ -333,7 +334,7 @@ function getSpaceMarineShooting(unit: UnitProfile, unitState: UnitState, state: 
   return details;
 }
 
-function getSpaceMarineCharge(unit: UnitProfile, unitState: UnitState, _enemies: { profile: UnitProfile; state: UnitState }[]): string[] {
+function getSpaceMarineCharge(unit: UnitProfile, unitState: UnitState): string[] {
   if (unitState.inReserve) return [`${unit.name} is in reserves — cannot charge.`];
 
   switch (unit.id) {
@@ -492,6 +493,7 @@ function getStratagemSuggestions(unit: UnitProfile, phase: Phase, state: GameSta
 
 // ── Reactive AI Actions (during player turn) ─────────────────────
 
+/** Generates reactive AI decisions during the player's turn (overwatch, heroic intervention, etc.). */
 export function generateReactiveAIDecisions(state: GameState): AIDecisionResult[] {
   const decisions: AIDecisionResult[] = [];
   const isTyranids = state.aiFaction.id === 'vardenghast-swarm';
@@ -596,6 +598,7 @@ export function generateReactiveAIDecisions(state: GameState): AIDecisionResult[
 
 // ── Main AI Decision Generator ───────────────────────────────────
 
+/** Main entry point: generates all AI decisions for the current phase and turn side. */
 export function generateAIDecisions(state: GameState): AIDecisionResult[] {
   if (state.phase === 'deployment') {
     return generateDeploymentGuidance(state);
@@ -648,7 +651,7 @@ export function generateAIDecisions(state: GameState): AIDecisionResult[] {
       case 'shooting':
         action = 'Shoot';
         details = isTyranids
-          ? getTyranidShooting(unit, unitState, state, aliveEnemies)
+          ? getTyranidShooting(unit, unitState, aliveEnemies)
           : isSpaceMarines
             ? getSpaceMarineShooting(unit, unitState, state, aliveEnemies)
             : [`${unit.name} shoots at nearest enemy.`];
@@ -659,7 +662,7 @@ export function generateAIDecisions(state: GameState): AIDecisionResult[] {
         details = isTyranids
           ? getTyranidCharge(unit, unitState, aliveEnemies)
           : isSpaceMarines
-            ? getSpaceMarineCharge(unit, unitState, aliveEnemies)
+            ? getSpaceMarineCharge(unit, unitState)
             : describeGenericCharge(unit, unit.role);
         break;
 

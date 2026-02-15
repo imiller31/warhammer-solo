@@ -6,6 +6,7 @@ export interface ScoreEntry {
   reason: string;
 }
 
+/** Creates a VP score tracker with history, totals, and breakdown by reason. */
 export function createScoreTracker() {
   const history: ScoreEntry[] = [];
 

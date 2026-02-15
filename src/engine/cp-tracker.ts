@@ -7,6 +7,7 @@ export interface CPLogEntry {
   type: 'gain' | 'spend';
 }
 
+/** Creates a CP tracker that logs gains and spends with net calculation per side. */
 export function createCPTracker() {
   const log: CPLogEntry[] = [];
 

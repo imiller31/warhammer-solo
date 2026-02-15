@@ -6,9 +6,11 @@ export function DiceRoller() {
   const [diceSides, setDiceSides] = useState(6);
 
   const roll = useCallback(() => {
+    const count = Math.max(1, Math.min(100, diceCount));
+    const sides = Math.max(2, Math.min(100, diceSides));
     const newResults: number[] = [];
-    for (let i = 0; i < diceCount; i++) {
-      newResults.push(Math.floor(Math.random() * diceSides) + 1);
+    for (let i = 0; i < count; i++) {
+      newResults.push(Math.floor(Math.random() * sides) + 1);
     }
     setResults(newResults);
   }, [diceCount, diceSides]);

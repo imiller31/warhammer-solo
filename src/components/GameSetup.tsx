@@ -14,9 +14,10 @@ export function GameSetup({ onStartGame }: GameSetupProps) {
   const [playerFactionId, setPlayerFactionId] = useState(spaceMarines.id);
   const [missionId, setMissionId] = useState(1);
 
-  const playerFaction = factions.find((f) => f.id === playerFactionId)!;
-  const aiFaction = factions.find((f) => f.id !== playerFactionId)!;
-  const selectedMission = missions.find((m) => m.id === missionId)!;
+  const playerFaction = factions.find((f) => f.id === playerFactionId) ?? spaceMarines;
+  const aiFaction = factions.find((f) => f.id !== playerFactionId) ?? tyranids;
+  const defaultMission: Mission = { id: 0, name: '', description: '', objectiveCount: 0, scoringRules: [], specialRules: [] };
+  const selectedMission = missions.find((m) => m.id === missionId) ?? defaultMission;
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">

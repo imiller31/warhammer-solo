@@ -12,7 +12,7 @@ interface PhaseTrackerProps {
   onCompleteDeployment: () => void;
 }
 
-export function PhaseTracker({ turn, phase, turnSide, onNextPhase, onNextTurn: _onNextTurn, gameOver, isDeployment, onCompleteDeployment }: PhaseTrackerProps) {
+export function PhaseTracker({ turn, phase, turnSide, onNextPhase, gameOver, isDeployment, onCompleteDeployment }: PhaseTrackerProps) {
   const currentIdx = PHASES.indexOf(phase);
   const isLastPhase = currentIdx === PHASES.length - 1;
 

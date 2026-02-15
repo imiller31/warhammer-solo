@@ -11,8 +11,7 @@ import { DiceRoller } from './components/DiceRoller';
 import { GameSetup } from './components/GameSetup';
 import { GameLog } from './components/GameLog';
 import { CoreStratagems } from './components/CoreStratagems';
-
-const SAVE_KEY = 'wh40k-solo-save';
+import { loadSavedGame, saveGame, clearSave } from './lib/storage';
 
 const emptyState: GameState = {
   turn: 0,
@@ -35,26 +34,6 @@ const emptyState: GameState = {
   turnLog: [],
   deploymentComplete: false,
 };
-
-function loadSavedGame(): GameState | null {
-  try {
-    const raw = localStorage.getItem(SAVE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as GameState;
-  } catch {
-    return null;
-  }
-}
-
-function saveGame(state: GameState) {
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
-  } catch { /* ignore quota errors */ }
-}
-
-function clearSave() {
-  localStorage.removeItem(SAVE_KEY);
-}
 
 export default function App() {
   const [savedGame] = useState<GameState | null>(() => loadSavedGame());
@@ -226,7 +205,8 @@ export default function App() {
             </h2>
             <div className="space-y-2">
               {state.playerFaction.units.map((unit) => {
-                const unitState = state.playerUnits.find((u) => u.unitId === unit.id)!;
+                const unitState = state.playerUnits.find((u) => u.unitId === unit.id);
+                if (!unitState) return null;
                 return (
                   <UnitCard
                     key={unit.id}
@@ -234,8 +214,8 @@ export default function App() {
                     unitState={unitState}
                     side="player"
                     isOathTarget={state.oathOfMomentTarget === unit.id}
-                    onUpdateWounds={(w) => dispatch({ type: 'UPDATE_UNIT', side: 'attacker', unitId: unit.id, updates: { currentWounds: w, isDestroyed: w <= 0 } })}
-                    onUpdateModels={(m) => dispatch({ type: 'UPDATE_UNIT', side: 'attacker', unitId: unit.id, updates: { modelsRemaining: m, isDestroyed: m <= 0 } })}
+                    onUpdateWounds={(w) => dispatch({ type: 'UPDATE_UNIT', side: 'attacker', unitId: unit.id, updates: { currentWounds: Math.max(0, Math.min(unit.wounds, w)), isDestroyed: w <= 0 } })}
+                    onUpdateModels={(m) => dispatch({ type: 'UPDATE_UNIT', side: 'attacker', unitId: unit.id, updates: { modelsRemaining: Math.max(0, Math.min(unit.modelCount, m)), isDestroyed: m <= 0 } })}
                     onToggleBattleshock={() => dispatch({ type: 'UPDATE_UNIT', side: 'attacker', unitId: unit.id, updates: { isBattleshocked: !unitState.isBattleshocked } })}
                     onDestroy={() => dispatch({ type: 'UPDATE_UNIT', side: 'attacker', unitId: unit.id, updates: { isDestroyed: true, modelsRemaining: 0, currentWounds: 0 } })}
                     onDeployFromReserve={unitState.inReserve && state.battleRound >= 2 ? () => dispatch({ type: 'DEPLOY_FROM_RESERVE', side: 'attacker', unitId: unit.id }) : undefined}
@@ -264,15 +244,16 @@ export default function App() {
             </h2>
             <div className="space-y-2">
               {state.aiFaction.units.map((unit) => {
-                const unitState = state.aiUnits.find((u) => u.unitId === unit.id)!;
+                const unitState = state.aiUnits.find((u) => u.unitId === unit.id);
+                if (!unitState) return null;
                 return (
                   <UnitCard
                     key={unit.id}
                     unit={unit}
                     unitState={unitState}
                     side="ai"
-                    onUpdateWounds={(w) => dispatch({ type: 'UPDATE_UNIT', side: 'defender', unitId: unit.id, updates: { currentWounds: w, isDestroyed: w <= 0 } })}
-                    onUpdateModels={(m) => dispatch({ type: 'UPDATE_UNIT', side: 'defender', unitId: unit.id, updates: { modelsRemaining: m, isDestroyed: m <= 0 } })}
+                    onUpdateWounds={(w) => dispatch({ type: 'UPDATE_UNIT', side: 'defender', unitId: unit.id, updates: { currentWounds: Math.max(0, Math.min(unit.wounds, w)), isDestroyed: w <= 0 } })}
+                    onUpdateModels={(m) => dispatch({ type: 'UPDATE_UNIT', side: 'defender', unitId: unit.id, updates: { modelsRemaining: Math.max(0, Math.min(unit.modelCount, m)), isDestroyed: m <= 0 } })}
                     onToggleBattleshock={() => dispatch({ type: 'UPDATE_UNIT', side: 'defender', unitId: unit.id, updates: { isBattleshocked: !unitState.isBattleshocked } })}
                     onDestroy={() => dispatch({ type: 'UPDATE_UNIT', side: 'defender', unitId: unit.id, updates: { isDestroyed: true, modelsRemaining: 0, currentWounds: 0 } })}
                     onDeployFromReserve={unitState.inReserve && state.battleRound >= 2 ? () => dispatch({ type: 'DEPLOY_FROM_RESERVE', side: 'defender', unitId: unit.id }) : undefined}

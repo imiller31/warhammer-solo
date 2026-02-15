@@ -1,10 +1,12 @@
 import type { Phase, GameState, GameAction, UnitState, LogEntry, TurnSide } from '../types';
 import { PHASES } from '../types';
 
+/** Creates a log entry with current game context. */
 function logEntry(message: string, state: GameState, category: 'player' | 'ai' | 'system' = 'system'): LogEntry {
   return { message, turn: state.battleRound, phase: state.phase, turnSide: state.turnSide, category };
 }
 
+/** Creates initial UnitState array from unit profiles. Deep Strike units start in reserve. */
 export function createInitialUnitStates(
   units: { id: string; wounds: number; modelCount: number; coreAbilities: string[] }[]
 ): UnitState[] {
@@ -38,10 +40,11 @@ function resetTurnFlags(units: UnitState[]): UnitState[] {
   }));
 }
 
+/** Returns the next phase in sequence, or null if at the last phase. */
 export function getNextPhase(current: Phase): Phase | null {
   const idx = PHASES.indexOf(current);
-  if (idx < PHASES.length - 1) return PHASES[idx + 1];
-  return null;
+  const next = idx >= 0 && idx < PHASES.length - 1 ? PHASES[idx + 1] : undefined;
+  return next ?? null;
 }
 
 /** Force-arrive any reserves still off the table at end of turn 3 */
@@ -122,6 +125,7 @@ function advanceAfterFight(state: GameState): GameState {
   }
 }
 
+/** Main game state reducer handling all game actions. */
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'START_GAME':
