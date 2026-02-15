@@ -95,3 +95,25 @@ Each unit gets a **role** that determines its behavior:
 - Vite
 - Tailwind CSS
 - No backend, no database — all state in memory/localStorage
+
+## Current Status
+
+### ✅ Implemented
+- **Battle round flow**: Full Player Turn (Command→Movement→Shooting→Charge→Fight) then AI Turn, then next battle round. Clear "YOUR TURN" / "AI TURN" indicator in PhaseTracker.
+- **Deployment phase**: Before turn 1, shows faction-specific deployment guidance (which units deploy where, Deep Strike reserves, Infiltrators positioning).
+- **Faction-aware AI behavior**:
+  - **Tyranids**: Terror of Vardenghast Deep Strikes turn 2+ targeting characters; Von Ryan's Leapers aggressive charges with Fights First; Termagants hold objectives with Skulking Horrors reminders; Barbgaunts always target Infantry for Disruption Bombardment; Psychophage Feeding Frenzy targets below-strength; auto-use Teeming Broods when Termagants < 10 models.
+  - **Space Marines**: Captain + Librarian attached to Terminators; all three Deep Strike turn 2+; Oath of Moment targets highest damage output enemy (not just toughness); Veil of Time Sustained Hits 1 noted; Infernus holds objectives.
+- **Reactive AI actions during player turn**: Fire Overwatch when charged, Heroic Intervention from Leapers (free via Pouncing Leap), Hyper-Reactive when shot at, Skulking Horrors movement reminder, Gene-Wrought Resilience.
+- **ScoreBoard fix**: Both +/- buttons work for VP and CP (VP allows negative delta, CP uses GAIN_CP/SPEND_CP actions).
+- **Mobile layout**: Single-column on small screens, responsive text sizes, touch-friendly button sizes.
+- **Unit reserve tracking**: `inReserve` flag on UnitState, Deep Strike units start in reserves.
+
+### 🔲 Not Yet Implemented
+- Automatic reserve arrival (currently guidance only — player manually manages)
+- Actual Oath of Moment target selection dispatch (shows recommendation but doesn't auto-set)
+- Shadow in the Warp auto-trigger
+- localStorage persistence / game save/load
+- Turn timer or phase auto-advance
+- Additional factions beyond SM/Tyranids
+- Mission-specific scoring automation
