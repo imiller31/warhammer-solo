@@ -1,4 +1,4 @@
-import { useReducer, useCallback, useEffect } from 'react';
+import { useReducer, useCallback, useEffect, useState } from 'react';
 import type { FactionData, Mission, GameState } from './types';
 import { PHASE_LABELS } from './types';
 import { gameReducer } from './engine/phase-sequencer';
@@ -10,6 +10,9 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { DiceRoller } from './components/DiceRoller';
 import { GameSetup } from './components/GameSetup';
 import { GameLog } from './components/GameLog';
+import { CoreStratagems } from './components/CoreStratagems';
+
+const SAVE_KEY = 'wh40k-solo-save';
 
 const emptyState: GameState = {
   turn: 0,
@@ -33,12 +36,55 @@ const emptyState: GameState = {
   deploymentComplete: false,
 };
 
+function loadSavedGame(): GameState | null {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as GameState;
+  } catch {
+    return null;
+  }
+}
+
+function saveGame(state: GameState) {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  } catch { /* ignore quota errors */ }
+}
+
+function clearSave() {
+  localStorage.removeItem(SAVE_KEY);
+}
+
 export default function App() {
+  const [savedGame] = useState<GameState | null>(() => loadSavedGame());
+  const [showResume, setShowResume] = useState(!!savedGame);
   const [state, dispatch] = useReducer(gameReducer, emptyState);
   const gameStarted = state.turn > 0;
 
+  // Auto-save on every state change
+  useEffect(() => {
+    if (gameStarted) {
+      saveGame(state);
+    }
+  }, [state, gameStarted]);
+
   const handleStartGame = useCallback((playerFaction: FactionData, aiFaction: FactionData, mission: Mission) => {
+    setShowResume(false);
     dispatch({ type: 'START_GAME', playerFaction, aiFaction, mission });
+  }, []);
+
+  const handleResumeGame = useCallback(() => {
+    if (savedGame) {
+      dispatch({ type: 'LOAD_GAME', state: savedGame });
+    }
+    setShowResume(false);
+  }, [savedGame]);
+
+  const handleResetGame = useCallback(() => {
+    clearSave();
+    dispatch({ type: 'RESET_GAME' });
+    setShowResume(false);
   }, []);
 
   useEffect(() => {
@@ -64,6 +110,38 @@ export default function App() {
     dispatch({ type: 'COMPLETE_DEPLOYMENT' });
   }, []);
 
+  // Show resume prompt
+  if (!gameStarted && showResume && savedGame) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
+        <div className="max-w-lg w-full space-y-6 text-center">
+          <h1 className="text-3xl font-bold text-amber-400">WARHAMMER 40K</h1>
+          <h2 className="text-lg text-gray-400">Solo Combat Patrol</h2>
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 space-y-4">
+            <p className="text-gray-300">Saved game found!</p>
+            <p className="text-sm text-gray-500">
+              Round {savedGame.battleRound}/5 — {savedGame.playerFaction.name} vs {savedGame.aiFaction.name}
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleResumeGame}
+                className="flex-1 bg-amber-600 hover:bg-amber-500 text-black font-bold py-3 px-4 rounded-lg transition-colors"
+              >
+                Continue Game
+              </button>
+              <button
+                onClick={() => { clearSave(); setShowResume(false); }}
+                className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-3 px-4 rounded-lg transition-colors"
+              >
+                New Game
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!gameStarted) {
     return <GameSetup onStartGame={handleStartGame} />;
   }
@@ -78,10 +156,19 @@ export default function App() {
             <h1 className="text-lg font-bold text-amber-400">WH40K Solo</h1>
             <span className="text-xs text-gray-500">{state.mission.name}</span>
           </div>
-          <div className="text-xs sm:text-sm text-gray-400 text-right">
-            <span className="text-blue-400">{state.playerFaction.name}</span>
-            {' '}vs{' '}
-            <span className="text-red-400">{state.aiFaction.name}</span>
+          <div className="flex items-center gap-2">
+            <div className="text-xs sm:text-sm text-gray-400 text-right">
+              <span className="text-blue-400">{state.playerFaction.name}</span>
+              {' '}vs{' '}
+              <span className="text-red-400">{state.aiFaction.name}</span>
+            </div>
+            <button
+              onClick={handleResetGame}
+              className="text-xs px-2 py-1 rounded border border-gray-600 text-gray-400 hover:border-red-500 hover:text-red-400 transition-colors"
+              title="Reset Game"
+            >
+              ✕ Reset
+            </button>
           </div>
         </div>
       </header>
@@ -127,6 +214,9 @@ export default function App() {
           decisions={state.aiDecisions}
           phaseName={PHASE_LABELS[state.phase]}
           turnSide={state.turnSide}
+          state={state}
+          onSetOathTarget={(targetId) => dispatch({ type: 'SET_OATH_TARGET', targetId })}
+          onUseShadowInTheWarp={() => dispatch({ type: 'USE_SHADOW_IN_WARP' })}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -143,10 +233,12 @@ export default function App() {
                     unit={unit}
                     unitState={unitState}
                     side="player"
+                    isOathTarget={state.oathOfMomentTarget === unit.id}
                     onUpdateWounds={(w) => dispatch({ type: 'UPDATE_UNIT', side: 'attacker', unitId: unit.id, updates: { currentWounds: w, isDestroyed: w <= 0 } })}
                     onUpdateModels={(m) => dispatch({ type: 'UPDATE_UNIT', side: 'attacker', unitId: unit.id, updates: { modelsRemaining: m, isDestroyed: m <= 0 } })}
                     onToggleBattleshock={() => dispatch({ type: 'UPDATE_UNIT', side: 'attacker', unitId: unit.id, updates: { isBattleshocked: !unitState.isBattleshocked } })}
                     onDestroy={() => dispatch({ type: 'UPDATE_UNIT', side: 'attacker', unitId: unit.id, updates: { isDestroyed: true, modelsRemaining: 0, currentWounds: 0 } })}
+                    onDeployFromReserve={unitState.inReserve && state.battleRound >= 2 ? () => dispatch({ type: 'DEPLOY_FROM_RESERVE', side: 'attacker', unitId: unit.id }) : undefined}
                   />
                 );
               })}
@@ -183,6 +275,7 @@ export default function App() {
                     onUpdateModels={(m) => dispatch({ type: 'UPDATE_UNIT', side: 'defender', unitId: unit.id, updates: { modelsRemaining: m, isDestroyed: m <= 0 } })}
                     onToggleBattleshock={() => dispatch({ type: 'UPDATE_UNIT', side: 'defender', unitId: unit.id, updates: { isBattleshocked: !unitState.isBattleshocked } })}
                     onDestroy={() => dispatch({ type: 'UPDATE_UNIT', side: 'defender', unitId: unit.id, updates: { isDestroyed: true, modelsRemaining: 0, currentWounds: 0 } })}
+                    onDeployFromReserve={unitState.inReserve && state.battleRound >= 2 ? () => dispatch({ type: 'DEPLOY_FROM_RESERVE', side: 'defender', unitId: unit.id }) : undefined}
                   />
                 );
               })}
@@ -202,6 +295,8 @@ export default function App() {
             )}
           </div>
         </div>
+
+        <CoreStratagems />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <DiceRoller />

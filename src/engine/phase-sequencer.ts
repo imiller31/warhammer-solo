@@ -1,5 +1,9 @@
-import type { Phase, GameState, GameAction, UnitState } from '../types';
+import type { Phase, GameState, GameAction, UnitState, LogEntry, TurnSide } from '../types';
 import { PHASES } from '../types';
+
+function logEntry(message: string, state: GameState, category: 'player' | 'ai' | 'system' = 'system'): LogEntry {
+  return { message, turn: state.battleRound, phase: state.phase, turnSide: state.turnSide, category };
+}
 
 export function createInitialUnitStates(
   units: { id: string; wounds: number; modelCount: number; coreAbilities: string[] }[]
@@ -40,13 +44,29 @@ export function getNextPhase(current: Phase): Phase | null {
   return null;
 }
 
-/**
- * After fight phase ends for a side, switch sides or advance battle round.
- * Flow: Player Command→Movement→Shooting→Charge→Fight → AI Command→...→Fight → next battle round
- */
+/** Force-arrive any reserves still off the table at end of turn 3 */
+function forceArriveReserves(units: UnitState[], turnSide: TurnSide, battleRound: number, logs: LogEntry[], state: GameState): { units: UnitState[]; logs: LogEntry[] } {
+  if (battleRound < 3) return { units, logs };
+  const newLogs = [...logs];
+  const updated = units.map((u) => {
+    if (u.inReserve && !u.isDestroyed) {
+      if (battleRound > 3) {
+        // After turn 3, reserves are destroyed
+        newLogs.push(logEntry(`${u.unitId} was still in reserves after turn 3 — DESTROYED!`, state, turnSide === 'player' ? 'player' : 'ai'));
+        return { ...u, inReserve: false, isDestroyed: true, modelsRemaining: 0, currentWounds: 0 };
+      } else {
+        // End of turn 3 — must arrive
+        newLogs.push(logEntry(`${u.unitId} MUST arrive from reserves now (end of turn 3)`, state, turnSide === 'player' ? 'player' : 'ai'));
+        return { ...u, inReserve: false };
+      }
+    }
+    return u;
+  });
+  return { units: updated, logs: newLogs };
+}
+
 function advanceAfterFight(state: GameState): GameState {
   if (state.turnSide === 'player') {
-    // Switch to AI turn
     return {
       ...state,
       turnSide: 'ai',
@@ -54,13 +74,32 @@ function advanceAfterFight(state: GameState): GameState {
       playerUnits: resetPhaseFlags(state.playerUnits),
       aiUnits: resetTurnFlags(state.aiUnits),
       aiDecisions: [],
-      turnLog: [...state.turnLog, `--- AI Turn (Battle Round ${state.battleRound}) ---`],
+      turnLog: [...state.turnLog, logEntry(`--- AI Turn (Battle Round ${state.battleRound}) ---`, state, 'system')],
     };
   } else {
-    // AI turn done — advance battle round
+    // End of AI turn — check reserves at end of turn 3
+    let aiUnits = state.aiUnits;
+    let playerUnits = state.playerUnits;
+    let extraLogs: LogEntry[] = [];
+
+    if (state.battleRound >= 3) {
+      const aiResult = forceArriveReserves(aiUnits, 'ai', state.battleRound, extraLogs, state);
+      aiUnits = aiResult.units;
+      extraLogs = aiResult.logs;
+      const playerResult = forceArriveReserves(playerUnits, 'player', state.battleRound, extraLogs, state);
+      playerUnits = playerResult.units;
+      extraLogs = playerResult.logs;
+    }
+
     const newRound = state.battleRound + 1;
     if (newRound > 5) {
-      return { ...state, gameOver: true, turnLog: [...state.turnLog, 'Game Over! 5 battle rounds completed.'] };
+      return {
+        ...state,
+        aiUnits,
+        playerUnits,
+        gameOver: true,
+        turnLog: [...state.turnLog, ...extraLogs, logEntry('Game Over! 5 battle rounds completed.', state, 'system')],
+      };
     }
     return {
       ...state,
@@ -68,12 +107,17 @@ function advanceAfterFight(state: GameState): GameState {
       turn: newRound,
       turnSide: 'player',
       phase: 'command',
-      playerUnits: resetTurnFlags(state.playerUnits),
-      aiUnits: resetTurnFlags(state.aiUnits),
+      playerUnits: resetTurnFlags(playerUnits),
+      aiUnits: resetTurnFlags(aiUnits),
       playerCP: state.playerCP + 1,
       aiCP: state.aiCP + 1,
       aiDecisions: [],
-      turnLog: [...state.turnLog, `=== Battle Round ${newRound} ===`, `--- Your Turn (Battle Round ${newRound}) ---`],
+      turnLog: [
+        ...state.turnLog,
+        ...extraLogs,
+        logEntry(`=== Battle Round ${newRound} ===`, state, 'system'),
+        logEntry(`--- Your Turn (Battle Round ${newRound}) ---`, state, 'system'),
+      ],
     };
   }
 }
@@ -114,16 +158,24 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         aiDecisions: [],
         gameOver: false,
         deploymentComplete: false,
-        turnLog: [`Battle begins! Mission: ${action.mission.name}`],
+        turnLog: [{ message: `Battle begins! Mission: ${action.mission.name}`, turn: 1, phase: 'deployment', turnSide: 'player', category: 'system' }],
       };
 
-    case 'COMPLETE_DEPLOYMENT':
-      return {
+    case 'COMPLETE_DEPLOYMENT': {
+      const base: GameState = {
         ...state,
         phase: 'command',
         deploymentComplete: true,
-        turnLog: [...state.turnLog, '=== Battle Round 1 ===', '--- Your Turn (Battle Round 1) ---'],
       };
+      return {
+        ...base,
+        turnLog: [
+          ...state.turnLog,
+          logEntry('=== Battle Round 1 ===', base, 'system'),
+          logEntry('--- Your Turn (Battle Round 1) ---', base, 'system'),
+        ],
+      };
+    }
 
     case 'NEXT_PHASE': {
       const next = getNextPhase(state.phase);
@@ -136,14 +188,11 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           aiDecisions: [],
         };
       }
-      // Last phase (fight) — advance to other side or next round
       return advanceAfterFight(state);
     }
 
-    case 'NEXT_TURN': {
-      // Legacy — same as advancing after last phase
+    case 'NEXT_TURN':
       return advanceAfterFight(state);
-    }
 
     case 'UPDATE_UNIT': {
       const key = action.side === 'attacker' ? 'playerUnits' : 'aiUnits';
@@ -155,13 +204,40 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
 
+    case 'DEPLOY_FROM_RESERVE': {
+      const key = action.side === 'attacker' ? 'playerUnits' : 'aiUnits';
+      const unitSide = action.side === 'attacker' ? 'player' : 'ai';
+      return {
+        ...state,
+        [key]: state[key].map((u) =>
+          u.unitId === action.unitId ? { ...u, inReserve: false } : u
+        ),
+        turnLog: [
+          ...state.turnLog,
+          logEntry(
+            `${action.unitId} deployed from reserves! Set up >9" from enemy models.`,
+            state,
+            unitSide === 'player' ? 'player' : 'ai'
+          ),
+        ],
+      };
+    }
+
     case 'SCORE_VP': {
       const vpKey = action.side === 'attacker' ? 'playerVP' : 'aiVP';
       const newVal = state[vpKey] + action.amount;
+      const cat = action.side === 'attacker' ? 'player' : 'ai';
       return {
         ...state,
         [vpKey]: Math.max(0, newVal),
-        turnLog: [...state.turnLog, `${action.side === 'attacker' ? 'Player' : 'AI'} ${action.amount > 0 ? 'scores' : 'loses'} ${Math.abs(action.amount)}VP: ${action.reason}`],
+        turnLog: [
+          ...state.turnLog,
+          logEntry(
+            `${action.side === 'attacker' ? 'Player' : 'AI'} ${action.amount > 0 ? 'scores' : 'loses'} ${Math.abs(action.amount)}VP: ${action.reason}`,
+            state,
+            cat as 'player' | 'ai'
+          ),
+        ],
       };
     }
 
@@ -169,44 +245,93 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const cpKey = action.side === 'attacker' ? 'playerCP' : 'aiCP';
       const current = state[cpKey];
       if (current < action.amount) return state;
+      const cat = action.side === 'attacker' ? 'player' : 'ai';
       return {
         ...state,
         [cpKey]: current - action.amount,
-        turnLog: [...state.turnLog, `${action.side === 'attacker' ? 'Player' : 'AI'} spends ${action.amount}CP: ${action.reason}`],
+        turnLog: [
+          ...state.turnLog,
+          logEntry(`${action.side === 'attacker' ? 'Player' : 'AI'} spends ${action.amount}CP: ${action.reason}`, state, cat as 'player' | 'ai'),
+        ],
       };
     }
 
     case 'GAIN_CP': {
       const cpKey = action.side === 'attacker' ? 'playerCP' : 'aiCP';
+      const cat = action.side === 'attacker' ? 'player' : 'ai';
       return {
         ...state,
         [cpKey]: state[cpKey] + action.amount,
-        turnLog: [...state.turnLog, `${action.side === 'attacker' ? 'Player' : 'AI'} gains ${action.amount}CP: ${action.reason}`],
+        turnLog: [
+          ...state.turnLog,
+          logEntry(`${action.side === 'attacker' ? 'Player' : 'AI'} gains ${action.amount}CP: ${action.reason}`, state, cat as 'player' | 'ai'),
+        ],
       };
     }
 
-    case 'SET_OATH_TARGET':
+    case 'SET_OATH_TARGET': {
+      const targetUnit = state.playerFaction.units.find((u) => u.id === action.targetId);
+      const targetName = targetUnit?.name ?? action.targetId;
       return {
         ...state,
         oathOfMomentTarget: action.targetId,
-        turnLog: [...state.turnLog, 'Oath of Moment target set.'],
+        turnLog: [
+          ...state.turnLog,
+          logEntry(`Oath of Moment: ${targetName} targeted. Re-roll all hits against them.`, state, 'ai'),
+        ],
       };
+    }
 
     case 'USE_SHADOW_IN_WARP':
       return {
         ...state,
         shadowInTheWarpUsed: true,
-        turnLog: [...state.turnLog, 'Shadow in the Warp unleashed! All enemy units must take Battle-shock tests.'],
+        turnLog: [
+          ...state.turnLog,
+          logEntry('Shadow in the Warp unleashed! All enemy units must take Battle-shock tests NOW.', state, 'ai'),
+        ],
       };
 
     case 'ADD_LOG':
-      return { ...state, turnLog: [...state.turnLog, action.message] };
+      return {
+        ...state,
+        turnLog: [
+          ...state.turnLog,
+          logEntry(action.message, state, action.category ?? 'system'),
+        ],
+      };
 
     case 'SET_AI_DECISIONS':
       return { ...state, aiDecisions: action.decisions };
 
     case 'END_GAME':
       return { ...state, gameOver: true };
+
+    case 'RESET_GAME':
+      return {
+        turn: 0,
+        battleRound: 0,
+        phase: 'command',
+        turnSide: 'player',
+        activePlayer: 'attacker',
+        playerFaction: { id: '', name: '', factionAbilities: [], units: [], stratagems: [], enhancements: [], secondaryObjectives: [] },
+        aiFaction: { id: '', name: '', factionAbilities: [], units: [], stratagems: [], enhancements: [], secondaryObjectives: [] },
+        playerUnits: [],
+        aiUnits: [],
+        playerVP: 0,
+        aiVP: 0,
+        playerCP: 0,
+        aiCP: 0,
+        mission: { id: 0, name: '', description: '', objectiveCount: 0, scoringRules: [], specialRules: [] },
+        shadowInTheWarpUsed: false,
+        aiDecisions: [],
+        gameOver: false,
+        turnLog: [],
+        deploymentComplete: false,
+      };
+
+    case 'LOAD_GAME':
+      return { ...action.state, aiDecisions: [] };
 
     default:
       return state;

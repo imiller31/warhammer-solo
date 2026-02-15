@@ -8,7 +8,9 @@ interface UnitCardProps {
   onUpdateModels: (models: number) => void;
   onToggleBattleshock: () => void;
   onDestroy: () => void;
+  onDeployFromReserve?: () => void;
   side: 'player' | 'ai';
+  isOathTarget?: boolean;
 }
 
 export function UnitCard({
@@ -18,10 +20,14 @@ export function UnitCard({
   onUpdateModels,
   onToggleBattleshock,
   onDestroy,
+  onDeployFromReserve,
   side,
+  isOathTarget,
 }: UnitCardProps) {
   const [expanded, setExpanded] = useState(false);
-  const borderColor = side === 'player' ? 'border-blue-600' : 'border-red-600';
+  const borderColor = isOathTarget
+    ? 'border-red-500 ring-1 ring-red-500/50'
+    : side === 'player' ? 'border-blue-600' : 'border-red-600';
   const accentColor = side === 'player' ? 'text-blue-400' : 'text-red-400';
   const roleColors: Record<string, string> = {
     aggressive: 'bg-red-900/50 text-red-300',
@@ -42,6 +48,33 @@ export function UnitCard({
     );
   }
 
+  if (unitState.inReserve) {
+    return (
+      <div className="bg-gray-900 border border-yellow-700 rounded-lg p-3">
+        <div className="flex justify-between items-center mb-2">
+          <div>
+            <h3 className={`font-bold ${accentColor}`}>{unit.name}</h3>
+            <span className="text-xs px-2 py-0.5 rounded bg-yellow-900/50 text-yellow-300">
+              IN RESERVES (Deep Strike)
+            </span>
+          </div>
+          <span className="text-xs text-yellow-400">⏳ Off Table</span>
+        </div>
+        {onDeployFromReserve && (
+          <button
+            onClick={onDeployFromReserve}
+            className="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded transition-colors text-sm"
+          >
+            🪂 Deploy from Reserve
+          </button>
+        )}
+        {!onDeployFromReserve && (
+          <p className="text-xs text-gray-500 italic">Arrives turn 2+. Set up &gt;9&quot; from all enemy models.</p>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className={`bg-gray-900 border ${borderColor} rounded-lg overflow-hidden`}>
       <button
@@ -50,14 +83,22 @@ export function UnitCard({
       >
         <div className="flex justify-between items-start">
           <div>
-            <h3 className={`font-bold ${accentColor}`}>{unit.name}</h3>
-            <div className="flex gap-2 mt-1">
+            <h3 className={`font-bold ${accentColor}`}>
+              {isOathTarget && <span className="text-red-400 mr-1" title="Oath of Moment Target">💀</span>}
+              {unit.name}
+            </h3>
+            <div className="flex gap-2 mt-1 flex-wrap">
               <span className={`text-xs px-2 py-0.5 rounded ${roleColors[unit.role]}`}>
                 {unit.role}
               </span>
               {unitState.isBattleshocked && (
                 <span className="text-xs px-2 py-0.5 rounded bg-yellow-900/50 text-yellow-300">
                   BATTLESHOCKED
+                </span>
+              )}
+              {isOathTarget && (
+                <span className="text-xs px-2 py-0.5 rounded bg-red-900/50 text-red-300">
+                  OATH TARGET
                 </span>
               )}
             </div>

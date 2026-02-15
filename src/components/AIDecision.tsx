@@ -1,13 +1,33 @@
-import type { AIDecisionResult, TurnSide } from '../types';
+import type { AIDecisionResult, TurnSide, GameState } from '../types';
 
 interface AIDecisionProps {
   decisions: AIDecisionResult[];
   phaseName: string;
   turnSide: TurnSide;
+  state: GameState;
+  onSetOathTarget?: (targetId: string) => void;
+  onUseShadowInTheWarp?: () => void;
 }
 
-export function AIDecision({ decisions, phaseName, turnSide }: AIDecisionProps) {
-  if (decisions.length === 0) {
+export function AIDecision({ decisions, phaseName, turnSide, state, onSetOathTarget, onUseShadowInTheWarp }: AIDecisionProps) {
+  const isPlayerTurn = turnSide === 'player';
+  const isAICommandPhase = turnSide === 'ai' && state.phase === 'command';
+  const isSpaceMarinesAI = state.aiFaction.id === 'strike-force-octavius';
+  const isTyranidsAI = state.aiFaction.id === 'vardenghast-swarm';
+
+  // Oath of Moment recommendation
+  const oathDecision = decisions.find((d) => d.unitId === 'faction-ability' && d.action === 'Select Oath Target');
+  const recommendedOathTarget = oathDecision?.details[0]?.match(/Select (.+?) as the Oath/)?.[1];
+  const recommendedOathId = isAICommandPhase && isSpaceMarinesAI
+    ? state.playerFaction.units.find((u) => u.name === recommendedOathTarget)?.id
+    : undefined;
+
+  // Shadow in the Warp recommendation
+  const showShadowButton = isAICommandPhase && isTyranidsAI && !state.shadowInTheWarpUsed;
+  const shadowRecommended = showShadowButton && state.battleRound >= 2 &&
+    state.playerUnits.filter((u) => !u.isDestroyed && u.modelsRemaining > 0).length >= 2;
+
+  if (decisions.length === 0 && !showShadowButton) {
     return (
       <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
         <h2 className="text-lg font-bold text-red-400 mb-2">AI Decisions</h2>
@@ -17,8 +37,6 @@ export function AIDecision({ decisions, phaseName, turnSide }: AIDecisionProps) 
       </div>
     );
   }
-
-  const isPlayerTurn = turnSide === 'player';
 
   return (
     <div className={`bg-gray-900 rounded-lg p-4 ${
@@ -32,6 +50,45 @@ export function AIDecision({ decisions, phaseName, turnSide }: AIDecisionProps) 
           : `AI Orders — ${phaseName}`
         }
       </h2>
+
+      {/* Oath of Moment confirmation */}
+      {recommendedOathId && onSetOathTarget && (
+        <div className="mb-3 bg-amber-900/30 border border-amber-700 rounded p-3">
+          <div className="text-sm font-bold text-amber-300 mb-1">💀 Oath of Moment</div>
+          <p className="text-xs text-gray-300 mb-2">
+            Target <span className="text-amber-400 font-semibold">{recommendedOathTarget}</span> — re-roll all hit rolls against this unit.
+          </p>
+          <button
+            onClick={() => onSetOathTarget(recommendedOathId)}
+            className="bg-amber-600 hover:bg-amber-500 text-black font-bold py-1.5 px-4 rounded text-sm transition-colors"
+          >
+            Confirm Oath Target
+          </button>
+          {state.oathOfMomentTarget && state.oathOfMomentTarget !== recommendedOathId && (
+            <span className="text-xs text-gray-500 ml-2">
+              (Current: {state.playerFaction.units.find((u) => u.id === state.oathOfMomentTarget)?.name})
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Shadow in the Warp button */}
+      {showShadowButton && onUseShadowInTheWarp && (
+        <div className={`mb-3 rounded p-3 border ${shadowRecommended ? 'bg-purple-900/30 border-purple-600' : 'bg-gray-800 border-gray-600'}`}>
+          <div className="text-sm font-bold text-purple-300 mb-1">🧠 Shadow in the Warp</div>
+          <p className="text-xs text-gray-300 mb-2">
+            All enemy units take Battle-shock tests NOW. Once per battle.
+            {shadowRecommended && <span className="text-purple-400 font-semibold"> ⚡ RECOMMENDED</span>}
+          </p>
+          <button
+            onClick={onUseShadowInTheWarp}
+            className="bg-purple-600 hover:bg-purple-500 text-white font-bold py-1.5 px-4 rounded text-sm transition-colors"
+          >
+            Use Shadow in the Warp
+          </button>
+        </div>
+      )}
+
       <div className="space-y-3">
         {decisions.map((d, i) => (
           <div

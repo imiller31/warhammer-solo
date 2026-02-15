@@ -92,6 +92,20 @@ export function generateDeploymentGuidance(state: GameState): AIDecisionResult[]
 function getTyranidMovement(unit: UnitProfile, unitState: UnitState, state: GameState, enemies: { profile: UnitProfile; state: UnitState }[]): string[] {
   const details: string[] = [];
 
+  // Reserve handling for any unit
+  if (unitState.inReserve) {
+    if (state.battleRound < 2) {
+      details.push(`${unit.name} remains in Deep Strike reserves. Wait until turn 2+ to arrive.`);
+      return details;
+    }
+    if (state.battleRound >= 3) {
+      details.push(`⚠️ ${unit.name} MUST arrive this turn! (Turn 3 — reserves destroyed if not deployed by end of turn)`);
+    } else {
+      details.push(`${unit.name} arrives from Deep Strike!`);
+    }
+    details.push(`Set up anywhere on the battlefield more than 9" from all enemy models.`);
+  }
+
   switch (unit.id) {
     case 'terror-of-vardenghast': {
       if (unitState.inReserve) {
@@ -229,6 +243,20 @@ function getTyranidCharge(unit: UnitProfile, unitState: UnitState, enemies: { pr
 
 function getSpaceMarineMovement(unit: UnitProfile, unitState: UnitState, state: GameState, enemies: { profile: UnitProfile; state: UnitState }[]): string[] {
   const details: string[] = [];
+
+  // Reserve handling
+  if (unitState.inReserve) {
+    if (state.battleRound < 2) {
+      details.push(`${unit.name} remains in Deep Strike reserves. Wait until turn 2+ to arrive.`);
+      return details;
+    }
+    if (state.battleRound >= 3) {
+      details.push(`⚠️ ${unit.name} MUST arrive this turn! (Turn 3 — reserves destroyed if not deployed by end of turn)`);
+    } else {
+      details.push(`${unit.name} arrives from Deep Strike!`);
+    }
+    details.push(`Set up anywhere on the battlefield more than 9" from all enemy models.`);
+  }
 
   switch (unit.id) {
     case 'captain-octavius':
@@ -370,7 +398,7 @@ function describeGenericCharge(unit: UnitProfile, role: UnitRole): string[] {
   return [`${unit.name} does NOT charge. ${role} role.`];
 }
 
-function describeFight(unit: UnitProfile, _state: GameState, enemies: { profile: UnitProfile; state: UnitState }[]): string[] {
+function describeFight(unit: UnitProfile, state: GameState, enemies: { profile: UnitProfile; state: UnitState }[]): string[] {
   const meleeWeapons = unit.weapons.filter((w) => w.range === 'Melee');
   if (meleeWeapons.length === 0) return [`${unit.name} has no melee weapons.`];
 
@@ -396,6 +424,14 @@ function describeFight(unit: UnitProfile, _state: GameState, enemies: { profile:
 
   if (unit.id === 'terror-of-vardenghast') {
     details.push(`Death Blow: If destroyed in melee before fighting, on 4+ it fights back then is removed.`);
+  }
+
+  // Oath of Moment in melee
+  if (state.oathOfMomentTarget && (state.aiFaction.id === 'strike-force-octavius')) {
+    const oathTarget = enemies.find((e) => e.profile.id === state.oathOfMomentTarget);
+    if (oathTarget) {
+      details.push(`🎯 Re-roll all hit rolls vs Oath target (${oathTarget.profile.name}).`);
+    }
   }
 
   return details;

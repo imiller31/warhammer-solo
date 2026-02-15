@@ -108,12 +108,14 @@ Each unit gets a **role** that determines its behavior:
 - **ScoreBoard fix**: Both +/- buttons work for VP and CP (VP allows negative delta, CP uses GAIN_CP/SPEND_CP actions).
 - **Mobile layout**: Single-column on small screens, responsive text sizes, touch-friendly button sizes.
 - **Unit reserve tracking**: `inReserve` flag on UnitState, Deep Strike units start in reserves.
+- **Automatic reserve management**: Turn 1 units stay in reserve with guidance. Turn 2+ shows Deep Strike arrival instructions ("Set up >9" from all enemy models"). Turn 3 end forces arrival; units still in reserve after turn 3 are destroyed. "Deploy from Reserve" button on UnitCard for reserved units (appears turn 2+).
+- **Oath of Moment target selection UI**: AI Command phase shows recommended target with "Confirm Oath Target" button. Dispatches SET_OATH_TARGET, shows persistent 💀 skull icon and "OATH TARGET" badge on targeted unit's card with red border. AI shooting/fighting references "Re-roll hits vs Oath target".
+- **Shadow in the Warp button**: Tyranid AI Command phase shows "Use Shadow in the Warp" button. Auto-recommended turn 2+ with 2+ enemy units. Dispatches USE_SHADOW_IN_WARP with guidance. Button disappears after use (once per battle).
+- **localStorage game save/restore**: Auto-saves GameState on every state change. On load, offers "Continue Game" or "New Game" if save exists. "Reset" button in header clears save and returns to setup.
+- **Game log improvements**: Scrollable with max height (auto-scrolls to bottom). Each entry tagged with [Round Phase] prefix. Color-coded: player actions blue, AI actions red, system events gray. Collapsible.
+- **Core Stratagems reference**: Collapsible section listing all 8 core stratagems (Command Re-roll, Insane Bravery, Fire Overwatch, Rapid Ingress, Go to Ground, Heroic Intervention, Counter-Offensive, Epic Challenge) with timing, CP cost, and effects.
 
 ### 🔲 Not Yet Implemented
-- Automatic reserve arrival (currently guidance only — player manually manages)
-- Actual Oath of Moment target selection dispatch (shows recommendation but doesn't auto-set)
-- Shadow in the Warp auto-trigger
-- localStorage persistence / game save/load
 - Turn timer or phase auto-advance
 - Additional factions beyond SM/Tyranids
 - Mission-specific scoring automation

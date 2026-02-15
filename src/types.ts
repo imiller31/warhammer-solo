@@ -97,6 +97,16 @@ export interface Mission {
   specialRules: string[];
 }
 
+// ── Log Entry ───────────────────────────────────────────────────
+
+export interface LogEntry {
+  message: string;
+  turn: number;
+  phase: Phase;
+  turnSide: TurnSide;
+  category: 'player' | 'ai' | 'system';
+}
+
 // ── Game State ──────────────────────────────────────────────────
 
 export interface UnitState {
@@ -141,7 +151,7 @@ export interface GameState {
   shadowInTheWarpUsed: boolean;
   aiDecisions: AIDecisionResult[];
   gameOver: boolean;
-  turnLog: string[];
+  turnLog: LogEntry[];
   deploymentComplete: boolean;
 }
 
@@ -151,11 +161,14 @@ export type GameAction =
   | { type: 'NEXT_PHASE' }
   | { type: 'NEXT_TURN' }
   | { type: 'UPDATE_UNIT'; side: PlayerSide; unitId: string; updates: Partial<UnitState> }
+  | { type: 'DEPLOY_FROM_RESERVE'; side: PlayerSide; unitId: string }
   | { type: 'SCORE_VP'; side: PlayerSide; amount: number; reason: string }
   | { type: 'SPEND_CP'; side: PlayerSide; amount: number; reason: string }
   | { type: 'GAIN_CP'; side: PlayerSide; amount: number; reason: string }
   | { type: 'SET_OATH_TARGET'; targetId: string }
   | { type: 'USE_SHADOW_IN_WARP' }
-  | { type: 'ADD_LOG'; message: string }
+  | { type: 'ADD_LOG'; message: string; category?: 'player' | 'ai' | 'system' }
   | { type: 'SET_AI_DECISIONS'; decisions: AIDecisionResult[] }
-  | { type: 'END_GAME' };
+  | { type: 'END_GAME' }
+  | { type: 'RESET_GAME' }
+  | { type: 'LOAD_GAME'; state: GameState };
