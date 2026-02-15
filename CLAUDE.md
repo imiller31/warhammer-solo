@@ -98,6 +98,18 @@ Each unit gets a **role** that determines its behavior:
 
 ## Current Status
 
+### ✅ Code Quality Hardening (v0.1.0)
+- **Strict TypeScript**: `noUncheckedIndexedAccess`, `noImplicitReturns` enabled. All `!` non-null assertions replaced with proper null checks/early returns.
+- **Lint clean**: Zero eslint errors. Removed unused vars/imports.
+- **Input validation**: `isValidGameState()` type guard validates localStorage data shape. Wounds/models clamped to valid ranges. Dice roller validates inputs.
+- **Error boundary**: `ErrorBoundary` component wraps app — no more white screens on render errors.
+- **Security**: CSP meta tag (`default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'`). No inline scripts.
+- **Testing**: 20 unit tests via Vitest — phase-sequencer (10), ai-behavior (5), scoring+cp-tracker (5). All passing.
+- **Storage refactor**: localStorage helpers moved to `src/lib/storage.ts` with shape validation.
+- **Production build**: Sourcemaps enabled. `package.json` version 0.1.0 with homepage field.
+- **JSDoc comments** on all exported engine functions.
+- **README** with install/dev/build/test instructions. MIT LICENSE file.
+
 ### ✅ Implemented
 - **Battle round flow**: Full Player Turn (Command→Movement→Shooting→Charge→Fight) then AI Turn, then next battle round. Clear "YOUR TURN" / "AI TURN" indicator in PhaseTracker.
 - **Deployment phase**: Before turn 1, shows faction-specific deployment guidance (which units deploy where, Deep Strike reserves, Infiltrators positioning).
