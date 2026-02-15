@@ -1,10 +1,11 @@
 // ── Core Game Types ──────────────────────────────────────────────
 
-export type Phase = 'command' | 'movement' | 'shooting' | 'charge' | 'fight';
+export type Phase = 'deployment' | 'command' | 'movement' | 'shooting' | 'charge' | 'fight';
 
 export const PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
 
 export const PHASE_LABELS: Record<Phase, string> = {
+  deployment: 'Deployment Phase',
   command: 'Command Phase',
   movement: 'Movement Phase',
   shooting: 'Shooting Phase',
@@ -14,32 +15,34 @@ export const PHASE_LABELS: Record<Phase, string> = {
 
 export type PlayerSide = 'attacker' | 'defender';
 
+export type TurnSide = 'player' | 'ai';
+
 export type UnitRole = 'aggressive' | 'defensive' | 'flanker' | 'support' | 'objective';
 
 // ── Weapon & Unit Data ──────────────────────────────────────────
 
 export interface Weapon {
   name: string;
-  range: string;         // e.g. "24\"" or "Melee"
-  attacks: string;       // e.g. "2" or "D6"
-  skill: string;         // e.g. "3+" or "N/A" (for Torrent)
+  range: string;
+  attacks: string;
+  skill: string;
   strength: number;
-  ap: number;            // 0, -1, -2 etc.
-  damage: string;        // e.g. "1" or "D3"
-  keywords: string[];    // e.g. ["Rapid Fire 2", "Devastating Wounds"]
+  ap: number;
+  damage: string;
+  keywords: string[];
 }
 
 export interface UnitProfile {
   id: string;
   name: string;
   faction: 'space-marines' | 'tyranids';
-  movement: string;      // e.g. "5\"" or "12\""
+  movement: string;
   toughness: number;
-  save: string;          // e.g. "2+"
+  save: string;
   wounds: number;
-  leadership: string;    // e.g. "6+"
+  leadership: string;
   oc: number;
-  invulnSave?: string;   // e.g. "4+"
+  invulnSave?: string;
   modelCount: number;
   weapons: Weapon[];
   abilities: string[];
@@ -47,8 +50,8 @@ export interface UnitProfile {
   keywords: string[];
   role: UnitRole;
   isLeader?: boolean;
-  leaderFor?: string;    // unit id this model can lead
-  attachedTo?: string;   // unit id this model is attached to
+  leaderFor?: string;
+  attachedTo?: string;
 }
 
 export interface Stratagem {
@@ -107,6 +110,7 @@ export interface UnitState {
   hasShot: boolean;
   hasCharged: boolean;
   hasFought: boolean;
+  inReserve: boolean;
 }
 
 export interface AIDecisionResult {
@@ -115,11 +119,14 @@ export interface AIDecisionResult {
   action: string;
   reasoning: string;
   details: string[];
+  isReactive?: boolean;
 }
 
 export interface GameState {
   turn: number;
   phase: Phase;
+  turnSide: TurnSide;
+  battleRound: number;
   activePlayer: PlayerSide;
   playerFaction: FactionData;
   aiFaction: FactionData;
@@ -135,15 +142,18 @@ export interface GameState {
   aiDecisions: AIDecisionResult[];
   gameOver: boolean;
   turnLog: string[];
+  deploymentComplete: boolean;
 }
 
 export type GameAction =
   | { type: 'START_GAME'; playerFaction: FactionData; aiFaction: FactionData; mission: Mission }
+  | { type: 'COMPLETE_DEPLOYMENT' }
   | { type: 'NEXT_PHASE' }
   | { type: 'NEXT_TURN' }
   | { type: 'UPDATE_UNIT'; side: PlayerSide; unitId: string; updates: Partial<UnitState> }
   | { type: 'SCORE_VP'; side: PlayerSide; amount: number; reason: string }
   | { type: 'SPEND_CP'; side: PlayerSide; amount: number; reason: string }
+  | { type: 'GAIN_CP'; side: PlayerSide; amount: number; reason: string }
   | { type: 'SET_OATH_TARGET'; targetId: string }
   | { type: 'USE_SHADOW_IN_WARP' }
   | { type: 'ADD_LOG'; message: string }

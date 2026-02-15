@@ -13,7 +13,9 @@ import { GameLog } from './components/GameLog';
 
 const emptyState: GameState = {
   turn: 0,
+  battleRound: 0,
   phase: 'command',
+  turnSide: 'player',
   activePlayer: 'attacker',
   playerFaction: { id: '', name: '', factionAbilities: [], units: [], stratagems: [], enhancements: [], secondaryObjectives: [] },
   aiFaction: { id: '', name: '', factionAbilities: [], units: [], stratagems: [], enhancements: [], secondaryObjectives: [] },
@@ -28,6 +30,7 @@ const emptyState: GameState = {
   aiDecisions: [],
   gameOver: false,
   turnLog: [],
+  deploymentComplete: false,
 };
 
 export default function App() {
@@ -43,46 +46,57 @@ export default function App() {
       const decisions = generateAIDecisions(state);
       dispatch({ type: 'SET_AI_DECISIONS', decisions });
     }
-  }, [state.turn, state.phase, gameStarted, state.gameOver, state.aiDecisions.length, state]);
+  }, [state.turn, state.phase, state.turnSide, gameStarted, state.gameOver, state.aiDecisions.length, state]);
 
   const handleNextPhase = useCallback(() => {
     dispatch({ type: 'NEXT_PHASE' });
   }, []);
 
   const handleNextTurn = useCallback(() => {
-    if (state.turn >= 5) {
+    if (state.turn >= 5 && state.turnSide === 'ai') {
       dispatch({ type: 'END_GAME' });
     } else {
       dispatch({ type: 'NEXT_TURN' });
     }
-  }, [state.turn]);
+  }, [state.turn, state.turnSide]);
+
+  const handleCompleteDeployment = useCallback(() => {
+    dispatch({ type: 'COMPLETE_DEPLOYMENT' });
+  }, []);
 
   if (!gameStarted) {
     return <GameSetup onStartGame={handleStartGame} />;
   }
 
+  const isDeployment = state.phase === 'deployment';
+
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
-      <header className="bg-gray-900 border-b border-gray-800 px-4 py-3">
+      <header className="bg-gray-900 border-b border-gray-800 px-3 sm:px-4 py-3">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold text-amber-400">WH40K Solo</h1>
             <span className="text-xs text-gray-500">{state.mission.name}</span>
           </div>
-          <div className="text-sm text-gray-400">
-            {state.playerFaction.name} <span className="text-gray-600">vs</span> {state.aiFaction.name}
+          <div className="text-xs sm:text-sm text-gray-400 text-right">
+            <span className="text-blue-400">{state.playerFaction.name}</span>
+            {' '}vs{' '}
+            <span className="text-red-400">{state.aiFaction.name}</span>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto p-4 space-y-4">
+      <main className="max-w-4xl mx-auto p-3 sm:p-4 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <PhaseTracker
-            turn={state.turn}
+            turn={state.battleRound}
             phase={state.phase}
+            turnSide={state.turnSide}
             onNextPhase={handleNextPhase}
             onNextTurn={handleNextTurn}
             gameOver={state.gameOver}
+            isDeployment={isDeployment}
+            onCompleteDeployment={handleCompleteDeployment}
           />
           <ScoreBoard
             playerVP={state.playerVP}
@@ -92,11 +106,16 @@ export default function App() {
             playerFactionName={state.playerFaction.name}
             aiFactionName={state.aiFaction.name}
             onAdjustVP={(side, delta) => {
-              if (delta > 0) dispatch({ type: 'SCORE_VP', side: side === 'player' ? 'attacker' : 'defender', amount: delta, reason: 'Manual adjustment' });
+              dispatch({
+                type: 'SCORE_VP',
+                side: side === 'player' ? 'attacker' : 'defender',
+                amount: delta,
+                reason: 'Manual adjustment',
+              });
             }}
             onAdjustCP={(side, delta) => {
               if (delta > 0) {
-                dispatch({ type: 'ADD_LOG', message: `${side === 'player' ? 'Player' : 'AI'} gains 1 CP (manual)` });
+                dispatch({ type: 'GAIN_CP', side: side === 'player' ? 'attacker' : 'defender', amount: delta, reason: 'Manual' });
               } else if (delta < 0) {
                 dispatch({ type: 'SPEND_CP', side: side === 'player' ? 'attacker' : 'defender', amount: 1, reason: 'Manual spend' });
               }
@@ -107,6 +126,7 @@ export default function App() {
         <AIDecision
           decisions={state.aiDecisions}
           phaseName={PHASE_LABELS[state.phase]}
+          turnSide={state.turnSide}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

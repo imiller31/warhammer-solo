@@ -21,7 +21,6 @@ export function UnitCard({
   side,
 }: UnitCardProps) {
   const [expanded, setExpanded] = useState(false);
-
   const borderColor = side === 'player' ? 'border-blue-600' : 'border-red-600';
   const accentColor = side === 'player' ? 'text-blue-400' : 'text-red-400';
   const roleColors: Record<string, string> = {
