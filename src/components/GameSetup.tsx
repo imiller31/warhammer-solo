@@ -21,16 +21,26 @@ export function GameSetup({ onStartGame }: GameSetupProps) {
 
   return (
     <div className="min-h-screen gd-bg flex items-center justify-center p-4">
-      <div className="max-w-lg w-full space-y-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-gothic font-black gd-gold mb-1 tracking-[0.2em] uppercase"
-              style={{ textShadow: '0 0 20px rgba(212, 175, 55, 0.3), 0 2px 4px rgba(0,0,0,0.8)' }}>
+      <div className="max-w-lg w-full space-y-6 gd-aquila-watermark">
+        {/* Title Section */}
+        <div className="text-center space-y-2">
+          <div className="gd-aquila-divider mb-4">
+            <span className="gd-aquila-wing-l"></span>
+            <span className="gd-aquila-center"></span>
+            <span className="gd-aquila-wing-r"></span>
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-gothic font-black gd-gold gd-title-glow tracking-[0.2em] uppercase">
             Warhammer 40K
           </h1>
           <h2 className="text-lg gd-bone font-gothic tracking-wider opacity-70">Solo Combat Patrol</h2>
+          <div className="gd-aquila-divider">
+            <span className="gd-aquila-wing-l"></span>
+            <span className="gd-aquila-center"></span>
+            <span className="gd-aquila-wing-r"></span>
+          </div>
         </div>
 
-        <div className="gd-panel-riveted rounded-lg p-4 space-y-4">
+        <div className="gd-panel-riveted gd-corners rounded-lg p-4 space-y-4">
           <div>
             <label className="block text-sm gd-gold-dim mb-2 font-gothic tracking-wider">Your Army</label>
             <div className="grid grid-cols-2 gap-2">
@@ -38,9 +48,9 @@ export function GameSetup({ onStartGame }: GameSetupProps) {
                 <button
                   key={f.id}
                   onClick={() => setPlayerFactionId(f.id)}
-                  className={`p-3 rounded border text-sm font-gothic font-semibold transition-colors ${
+                  className={`gd-faction-card p-3 rounded border text-sm font-gothic font-semibold transition-all ${
                     playerFactionId === f.id
-                      ? 'border-[#4a6fa5] bg-[#4a6fa5]/20 text-[#6a9fd5]'
+                      ? 'gd-faction-card-selected border-[#4a6fa5] text-[#6a9fd5]'
                       : 'border-[#3a3a4a] gd-bone opacity-60 hover:border-[#5a5a6a]'
                   }`}
                 >
@@ -50,8 +60,16 @@ export function GameSetup({ onStartGame }: GameSetupProps) {
             </div>
           </div>
 
+          <div className="gd-section-divider">
+            <span className="gd-section-diamond"></span>
+          </div>
+
           <div className="text-center text-sm gd-bone opacity-40">
             vs <span className="text-[#a83232] font-gothic font-semibold">{aiFaction.name}</span> (AI)
+          </div>
+
+          <div className="gd-section-divider">
+            <span className="gd-section-diamond"></span>
           </div>
 
           <div>
@@ -61,7 +79,7 @@ export function GameSetup({ onStartGame }: GameSetupProps) {
                 <button
                   key={m.id}
                   onClick={() => setMissionId(m.id)}
-                  className={`w-full text-left p-2 rounded border text-sm transition-colors ${
+                  className={`w-full text-left p-2 rounded border text-sm transition-all ${
                     missionId === m.id
                       ? 'border-[#c9a227] bg-[#c9a227]/10 gd-gold'
                       : 'border-[#3a3a4a] gd-bone opacity-60 hover:border-[#5a5a6a]'
@@ -77,9 +95,9 @@ export function GameSetup({ onStartGame }: GameSetupProps) {
 
         <button
           onClick={() => onStartGame(playerFaction, aiFaction, selectedMission)}
-          className="w-full gd-btn-gold py-3 px-6 rounded-lg text-lg transition-colors font-gothic tracking-wider"
+          className="w-full gd-btn-begin-battle py-4 px-6 rounded-lg font-gothic tracking-wider"
         >
-          ⚔ Begin Battle
+          ⚔ BEGIN BATTLE ⚔
         </button>
       </div>
     </div>

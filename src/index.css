@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════
-   GRIMDARK 40K THEME
+   GRIMDARK 40K THEME — V2 DRAMATIC OVERHAUL
    ═══════════════════════════════════════════ */
 
 /* iOS Safari fixes */
@@ -51,6 +51,14 @@ input, select, textarea {
 }
 
 /* ═══════════════════════════════════════════
+   GLOBAL TRANSITIONS
+   ═══════════════════════════════════════════ */
+
+*, *::before, *::after {
+  transition-timing-function: ease;
+}
+
+/* ═══════════════════════════════════════════
    GOTHIC TYPOGRAPHY
    ═══════════════════════════════════════════ */
 
@@ -63,6 +71,68 @@ h1, h2, h3 {
 }
 
 /* ═══════════════════════════════════════════
+   NOISE / GRAIN OVERLAY (pure CSS SVG)
+   ═══════════════════════════════════════════ */
+
+.gd-bg::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+
+/* ═══════════════════════════════════════════
+   VIGNETTE OVERLAY
+   ═══════════════════════════════════════════ */
+
+.gd-bg::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.7) 100%);
+}
+
+/* ═══════════════════════════════════════════
+   ATMOSPHERIC BACKGROUND — Turn-based shifts
+   ═══════════════════════════════════════════ */
+
+.gd-bg {
+  position: relative;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(139, 0, 0, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(26, 26, 46, 0.4) 0%, transparent 50%),
+    #0a0a0f;
+  transition: background 0.8s ease;
+}
+
+.gd-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+.gd-bg-ai-turn {
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(139, 0, 0, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(90, 10, 10, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(40, 0, 0, 0.06) 0%, transparent 70%),
+    #0c0808;
+}
+
+.gd-bg-player-turn {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(40, 60, 100, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(26, 26, 46, 0.5) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(20, 30, 50, 0.06) 0%, transparent 70%),
+    #08080f;
+}
+
+/* ═══════════════════════════════════════════
    GRIMDARK PANELS & CARDS
    ═══════════════════════════════════════════ */
 
@@ -72,6 +142,7 @@ h1, h2, h3 {
   box-shadow:
     inset 0 1px 0 rgba(255, 215, 0, 0.05),
     0 2px 8px rgba(0, 0, 0, 0.5);
+  position: relative;
 }
 
 .gd-panel-riveted {
@@ -81,6 +152,32 @@ h1, h2, h3 {
     inset 0 0 0 1px #2a2a3a,
     inset 0 1px 0 rgba(255, 215, 0, 0.05),
     0 2px 8px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+/* ── Corner Ornaments ── */
+.gd-corners::before,
+.gd-corners::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.gd-corners::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid #c9a227;
+  border-left: 2px solid #c9a227;
+}
+
+.gd-corners::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid #c9a227;
+  border-right: 2px solid #c9a227;
 }
 
 /* Imperial gold accent */
@@ -102,6 +199,97 @@ h1, h2, h3 {
 }
 
 /* ═══════════════════════════════════════════
+   AQUILA DIVIDER — Pure CSS
+   ═══════════════════════════════════════════ */
+
+.gd-aquila-divider {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 8px 0;
+  position: relative;
+}
+
+.gd-aquila-divider::before,
+.gd-aquila-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c9a22760, #c9a22740);
+}
+
+.gd-aquila-divider::after {
+  background: linear-gradient(90deg, #c9a22740, #c9a22760, transparent);
+}
+
+.gd-aquila-center {
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  border: 1px solid #c9a22780;
+  background: #0a0a0f;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.gd-aquila-center::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid #c9a22740;
+  transform: rotate(0deg);
+}
+
+/* Wing-like angular extensions */
+.gd-aquila-wing-l,
+.gd-aquila-wing-r {
+  width: 20px;
+  height: 1px;
+  flex-shrink: 0;
+}
+
+.gd-aquila-wing-l {
+  background: linear-gradient(90deg, transparent, #c9a22780);
+  transform: skewY(-8deg);
+}
+
+.gd-aquila-wing-r {
+  background: linear-gradient(90deg, #c9a22780, transparent);
+  transform: skewY(8deg);
+}
+
+/* ═══════════════════════════════════════════
+   SECTION DIVIDER — Diamond center
+   ═══════════════════════════════════════════ */
+
+.gd-section-divider {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.gd-section-divider::before,
+.gd-section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #3a3a4a80, #3a3a4a);
+}
+
+.gd-section-divider::after {
+  background: linear-gradient(90deg, #3a3a4a, #3a3a4a80, transparent);
+}
+
+.gd-section-diamond {
+  width: 6px;
+  height: 6px;
+  transform: rotate(45deg);
+  background: #c9a22760;
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
+/* ═══════════════════════════════════════════
    HEADER — COMMAND CONSOLE
    ═══════════════════════════════════════════ */
 
@@ -111,14 +299,55 @@ h1, h2, h3 {
   box-shadow:
     0 2px 0 #c9a22740,
     0 4px 12px rgba(0, 0, 0, 0.6);
+  position: relative;
 }
 
 .gd-header::after {
   content: '';
   display: block;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #c9a22780, transparent);
+  background: linear-gradient(90deg, transparent 5%, #c9a22780 20%, #c9a227 50%, #c9a22780 80%, transparent 95%);
   margin-top: 2px;
+}
+
+/* Status lights */
+.gd-status-light {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 4px currentColor;
+}
+
+.gd-status-green {
+  background: #44cc44;
+  color: #44cc44;
+}
+
+.gd-status-amber {
+  background: #ccaa44;
+  color: #ccaa44;
+}
+
+.gd-status-red {
+  background: #cc4444;
+  color: #cc4444;
+}
+
+/* Chevron decoration */
+.gd-chevrons {
+  display: flex;
+  gap: 3px;
+  opacity: 0.3;
+}
+
+.gd-chevron {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 6px solid #c9a227;
+  transform: rotate(90deg);
 }
 
 /* ═══════════════════════════════════════════
@@ -130,7 +359,7 @@ h1, h2, h3 {
   border: 1px solid #5a5a6a;
   color: #e8dcc8;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .gd-btn:hover {
@@ -140,6 +369,7 @@ h1, h2, h3 {
 .gd-btn:active {
   background: linear-gradient(180deg, #2a2a3a 0%, #3a3a4a 100%);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+  transform: translateY(1px);
 }
 
 .gd-btn-gold {
@@ -147,21 +377,93 @@ h1, h2, h3 {
   border: 1px solid #d4af37;
   color: #0a0a0f;
   font-weight: 700;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 2px 8px rgba(212, 175, 55, 0.2);
+  transition: all 0.2s ease;
 }
 
 .gd-btn-gold:hover {
   background: linear-gradient(180deg, #e0bf47 0%, #b08f28 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 2px 12px rgba(212, 175, 55, 0.3);
+}
+
+.gd-btn-gold:active {
+  background: linear-gradient(180deg, #9a7b20 0%, #d4af37 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  transform: translateY(1px);
 }
 
 .gd-btn-danger {
   background: linear-gradient(180deg, #8b0000 0%, #5a0000 100%);
   border: 1px solid #a83232;
   color: #e8dcc8;
+  transition: all 0.2s ease;
 }
 
 .gd-btn-danger:hover {
   background: linear-gradient(180deg, #a83232 0%, #6b0000 100%);
+}
+
+/* ── Begin Battle — WEIGHTY ── */
+.gd-btn-begin-battle {
+  background: linear-gradient(180deg, #e0bf47 0%, #d4af37 30%, #9a7b20 70%, #7a5b10 100%);
+  border: 2px solid #d4af37;
+  color: #0a0a0f;
+  font-weight: 900;
+  font-size: 1.25rem;
+  letter-spacing: 0.15em;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+    0 0 20px rgba(212, 175, 55, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.gd-btn-begin-battle:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+    0 0 30px rgba(212, 175, 55, 0.35),
+    0 4px 16px rgba(0, 0, 0, 0.5);
+  transform: translateY(-1px);
+}
+
+.gd-btn-begin-battle:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.4),
+    0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+/* ── Roll Button Shake ── */
+@keyframes dice-shake {
+  0%, 100% { transform: translateX(0); }
+  10% { transform: translateX(-3px) rotate(-1deg); }
+  30% { transform: translateX(3px) rotate(1deg); }
+  50% { transform: translateX(-2px) rotate(-0.5deg); }
+  70% { transform: translateX(2px) rotate(0.5deg); }
+  90% { transform: translateX(-1px); }
+}
+
+.gd-btn-roll {
+  background: linear-gradient(180deg, #d4af37 0%, #9a7b20 50%, #7a5b10 100%);
+  border: 2px solid #d4af37;
+  color: #0a0a0f;
+  font-weight: 900;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
+}
+
+.gd-btn-roll:active {
+  animation: dice-shake 0.3s ease;
 }
 
 /* ═══════════════════════════════════════════
@@ -202,6 +504,25 @@ h1, h2, h3 {
   border-color: #4a6fa5 !important;
 }
 
+/* ── Card expand animation ── */
+.gd-card-expand {
+  animation: card-slide-in 0.25s ease-out;
+  overflow: hidden;
+}
+
+@keyframes card-slide-in {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    max-height: 800px;
+    transform: translateY(0);
+  }
+}
+
 /* ═══════════════════════════════════════════
    BATTLESHOCK PULSE
    ═══════════════════════════════════════════ */
@@ -233,7 +554,7 @@ h1, h2, h3 {
 }
 
 /* ═══════════════════════════════════════════
-   GAME LOG — DATA-SLATE CRT
+   GAME LOG — SERVITOR DATA FEED
    ═══════════════════════════════════════════ */
 
 .gd-dataslate {
@@ -242,6 +563,37 @@ h1, h2, h3 {
   background: #0a0f0a;
   border: 1px solid #2a3a2a;
   text-shadow: 0 0 2px rgba(136, 204, 136, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* CRT Scan lines */
+.gd-dataslate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+}
+
+/* CRT Flicker */
+@keyframes crt-flicker {
+  0%, 97%, 100% { opacity: 1; }
+  97.5% { opacity: 0.92; }
+  98% { opacity: 1; }
+  98.5% { opacity: 0.96; }
+  99% { opacity: 1; }
+}
+
+.gd-dataslate {
+  animation: crt-flicker 8s ease-in-out infinite;
 }
 
 .gd-dataslate-line {
@@ -256,14 +608,64 @@ h1, h2, h3 {
   color: #aacc66;
 }
 
+.gd-dataslate-round {
+  color: #d4af37;
+  text-shadow: 0 0 4px rgba(212, 175, 55, 0.4);
+  font-weight: bold;
+  border-top: 1px solid #3a4a2a;
+  border-bottom: 1px solid #3a4a2a;
+  padding: 2px 0;
+  margin: 4px 0;
+  background: rgba(212, 175, 55, 0.03);
+}
+
 /* ═══════════════════════════════════════════
    SCORE — BRASS COUNTERS
    ═══════════════════════════════════════════ */
 
 .gd-brass-counter {
   color: #d4af37;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.6),
+    0 0 8px rgba(212, 175, 55, 0.15);
   font-family: 'Cinzel', serif;
+}
+
+.gd-vp-large {
+  font-size: 2rem;
+  font-weight: 900;
+  font-family: 'Cinzel', serif;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.8),
+    0 0 12px rgba(212, 175, 55, 0.2);
+}
+
+.gd-cp-counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(180deg, #4a4a5a 0%, #2a2a3a 100%);
+  border: 2px solid #5a5a6a;
+  border-radius: 4px;
+  font-weight: 900;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Faction glow accents for scoreboard */
+.gd-player-glow {
+  box-shadow: inset 0 0 12px rgba(74, 111, 165, 0.1), 0 0 8px rgba(74, 111, 165, 0.08);
+  border-color: #4a6fa540;
+}
+
+.gd-ai-glow {
+  box-shadow: inset 0 0 12px rgba(139, 0, 0, 0.1), 0 0 8px rgba(139, 0, 0, 0.08);
+  border-color: #8b000040;
 }
 
 /* ═══════════════════════════════════════════
@@ -274,6 +676,18 @@ h1, h2, h3 {
   background: linear-gradient(135deg, #12121e 0%, #1a1a2e 100%);
   border: 1px solid #3a3a4a;
   clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  position: relative;
+}
+
+/* Holo-display readout feel */
+.gd-holo-readout {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border: 1px solid;
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .gd-phase-bar {
@@ -291,33 +705,49 @@ h1, h2, h3 {
 }
 
 /* ═══════════════════════════════════════════
-   DICE ROLLER
+   DICE ROLLER — CEREMONITE DICE
    ═══════════════════════════════════════════ */
 
 .gd-die {
-  background: linear-gradient(135deg, #3a3a4a, #2a2a3a);
-  border: 1px solid #5a5a6a;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, #4a4a5a 0%, #3a3a4a 40%, #2a2a3a 100%);
+  border: 1px solid #6a6a7a;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.3);
   font-family: 'Cinzel', serif;
   font-weight: 700;
+  transition: all 0.2s ease;
 }
 
 .gd-die-crit {
-  border-color: #4a8a4a;
-  color: #88cc88;
-  background: linear-gradient(135deg, #1a3a1a, #0a2a0a);
-  box-shadow: 0 0 6px rgba(74, 138, 74, 0.3);
+  border-color: #d4af37;
+  color: #ffd700;
+  background:
+    radial-gradient(circle at center, rgba(255, 215, 0, 0.15) 0%, transparent 70%),
+    linear-gradient(135deg, #3a3a1a 0%, #2a2a0a 100%);
+  box-shadow:
+    0 0 8px rgba(255, 215, 0, 0.4),
+    0 0 20px rgba(255, 215, 0, 0.15),
+    inset 0 0 8px rgba(255, 215, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
 }
 
 .gd-die-fail {
-  border-color: #8b0000;
-  color: #cc4444;
-  background: linear-gradient(135deg, #3a1a1a, #2a0a0a);
-  box-shadow: 0 0 6px rgba(139, 0, 0, 0.3);
+  border-color: #5a2a2a;
+  color: #884444;
+  background: linear-gradient(135deg, #2a1a1a 0%, #1a0a0a 100%);
+  box-shadow:
+    inset 0 0 4px rgba(139, 0, 0, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  text-decoration: line-through;
+  text-decoration-color: rgba(139, 0, 0, 0.4);
 }
 
 /* ═══════════════════════════════════════════
-   STAT BLOCK
+   STAT BLOCK — DATASHEET STAMP
    ═══════════════════════════════════════════ */
 
 .gd-stat-grid {
@@ -325,8 +755,8 @@ h1, h2, h3 {
   grid-template-columns: repeat(6, 1fr);
   gap: 2px;
   background: #2a2a3a;
-  border: 1px solid #4a4a5a;
-  padding: 1px;
+  border: 3px double #5a5a6a;
+  padding: 2px;
 }
 
 .gd-stat-cell {
@@ -351,7 +781,7 @@ h1, h2, h3 {
 }
 
 /* ═══════════════════════════════════════════
-   WEAPON READOUT
+   WEAPON READOUT — Gold separators
    ═══════════════════════════════════════════ */
 
 .gd-weapon {
@@ -359,6 +789,11 @@ h1, h2, h3 {
   border-left: 2px solid #4a4a5a;
   font-family: 'Courier New', monospace;
   font-size: 11px;
+  position: relative;
+}
+
+.gd-weapon + .gd-weapon {
+  border-top: 1px solid #c9a22730;
 }
 
 /* ═══════════════════════════════════════════
@@ -376,12 +811,141 @@ h1, h2, h3 {
 }
 
 /* ═══════════════════════════════════════════
-   BACKGROUND
+   AI DECISION — TACTICAL DISPLAY
    ═══════════════════════════════════════════ */
 
-.gd-bg {
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(139, 0, 0, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 50%, rgba(26, 26, 46, 0.4) 0%, transparent 50%),
-    #0a0a0f;
+.gd-tactical-frame {
+  border: 1px solid #3a3a4a;
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+}
+
+.gd-tactical-header {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #557755;
+  padding: 2px 0;
+}
+
+.gd-alert-frame {
+  border: 1px solid #a8323280;
+  background: rgba(139, 0, 0, 0.05);
+  box-shadow: inset 0 0 12px rgba(139, 0, 0, 0.05);
+}
+
+.gd-alert-reactive {
+  border: 1px solid #c9a22780;
+  background: rgba(201, 162, 39, 0.03);
+}
+
+/* ═══════════════════════════════════════════
+   SETUP SCREEN — DRAMATIC
+   ═══════════════════════════════════════════ */
+
+@keyframes title-glow {
+  0%, 100% {
+    text-shadow:
+      0 0 20px rgba(212, 175, 55, 0.3),
+      0 0 40px rgba(212, 175, 55, 0.1),
+      0 2px 4px rgba(0, 0, 0, 0.8);
+  }
+  50% {
+    text-shadow:
+      0 0 30px rgba(212, 175, 55, 0.5),
+      0 0 60px rgba(212, 175, 55, 0.2),
+      0 2px 4px rgba(0, 0, 0, 0.8);
+  }
+}
+
+.gd-title-glow {
+  animation: title-glow 4s ease-in-out infinite;
+}
+
+/* Imperial Aquila watermark — pure CSS */
+.gd-aquila-watermark {
+  position: relative;
+}
+
+.gd-aquila-watermark::before {
+  content: '🦅';
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 80px;
+  opacity: 0.04;
+  pointer-events: none;
+  filter: grayscale(1);
+}
+
+/* Faction selection cards */
+.gd-faction-card {
+  border-top: 3px solid #3a3a4a;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.gd-faction-card-selected {
+  border-top-color: #4a6fa5;
+  background: rgba(74, 111, 165, 0.12);
+}
+
+.gd-faction-card:hover {
+  border-top-color: #5a5a6a;
+}
+
+/* ═══════════════════════════════════════════
+   GAME OVER — EPIC STATE
+   ═══════════════════════════════════════════ */
+
+@keyframes game-over-pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 20px rgba(212, 175, 55, 0.4),
+      0 0 40px rgba(212, 175, 55, 0.2);
+  }
+  50% {
+    text-shadow:
+      0 0 40px rgba(212, 175, 55, 0.6),
+      0 0 80px rgba(212, 175, 55, 0.3);
+  }
+}
+
+.gd-game-over {
+  animation: game-over-pulse 2s ease-in-out infinite;
+  font-size: 1.75rem;
+  letter-spacing: 0.3em;
+}
+
+.gd-victory {
+  color: #d4af37;
+}
+
+.gd-defeat {
+  color: #a83232;
+}
+
+/* ═══════════════════════════════════════════
+   INDUSTRIAL / WORN EDGES
+   ═══════════════════════════════════════════ */
+
+.gd-worn {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 215, 0, 0.03),
+    inset 2px 0 4px rgba(0, 0, 0, 0.2),
+    inset -2px 0 4px rgba(0, 0, 0, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Hash marks decoration */
+.gd-hash-marks {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    rgba(201, 162, 39, 0.04) 4px,
+    rgba(201, 162, 39, 0.04) 5px
+  );
 }

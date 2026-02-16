@@ -95,7 +95,7 @@ export default function App() {
     return (
       <div className="min-h-screen gd-bg flex items-center justify-center p-4">
         <div className="max-w-lg w-full space-y-6 text-center">
-          <h1 className="text-3xl font-gothic font-bold gd-gold tracking-wider">WARHAMMER 40K</h1>
+          <h1 className="text-3xl font-gothic font-bold gd-gold gd-title-glow tracking-wider">WARHAMMER 40K</h1>
           <h2 className="text-lg gd-bone font-gothic tracking-wide">Solo Combat Patrol</h2>
           <div className="gd-panel-riveted rounded-lg p-6 space-y-4">
             <p className="gd-parchment">Saved game found!</p>
@@ -129,12 +129,18 @@ export default function App() {
   const isDeployment = state.phase === 'deployment';
 
   return (
-    <div className="min-h-screen gd-bg gd-parchment">
+    <div className={`min-h-screen gd-bg gd-parchment ${state.turnSide === 'ai' ? 'gd-bg-ai-turn' : 'gd-bg-player-turn'}`}>
       <header className="gd-header px-3 sm:px-4 py-3">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-gothic font-bold gd-gold tracking-wider">WH40K SOLO</h1>
-            <span className="text-xs gd-bone opacity-50 font-gothic">{state.mission.name}</span>
+          <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-1">
+              <span className={`gd-status-light ${state.turnSide === 'player' ? 'gd-status-green' : 'gd-status-red'}`}></span>
+              <span className="gd-status-light gd-status-amber"></span>
+            </div>
+            <div>
+              <h1 className="text-lg font-gothic font-bold gd-gold tracking-wider">WH40K SOLO</h1>
+              <span className="text-xs gd-bone opacity-50 font-gothic">{state.mission.name}</span>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <div className="text-xs sm:text-sm text-right">
@@ -190,6 +196,8 @@ export default function App() {
           />
         </div>
 
+        <div className="gd-aquila-divider"><span className="gd-aquila-wing-l"></span><span className="gd-aquila-center"></span><span className="gd-aquila-wing-r"></span></div>
+
         <AIDecision
           decisions={state.aiDecisions}
           phaseName={PHASE_LABELS[state.phase]}
@@ -198,6 +206,8 @@ export default function App() {
           onSetOathTarget={(targetId) => dispatch({ type: 'SET_OATH_TARGET', targetId })}
           onUseShadowInTheWarp={() => dispatch({ type: 'USE_SHADOW_IN_WARP' })}
         />
+
+        <div className="gd-aquila-divider"><span className="gd-aquila-wing-l"></span><span className="gd-aquila-center"></span><span className="gd-aquila-wing-r"></span></div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>

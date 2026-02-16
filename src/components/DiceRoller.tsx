@@ -18,8 +18,14 @@ export function DiceRoller() {
   const total = results.reduce((s, v) => s + v, 0);
 
   return (
-    <div className="gd-panel-riveted rounded-lg p-4">
-      <h2 className="text-lg font-gothic font-bold gd-gold mb-3 tracking-wider">Dice Roller</h2>
+    <div className="gd-panel-riveted gd-corners rounded-lg p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <h2 className="text-lg font-gothic font-bold gd-gold tracking-wider">Dice Roller</h2>
+        <div className="gd-chevrons">
+          <span className="gd-chevron"></span>
+          <span className="gd-chevron"></span>
+        </div>
+      </div>
 
       <div className="flex gap-2 mb-3">
         <div className="flex items-center gap-1">
@@ -41,7 +47,7 @@ export function DiceRoller() {
             <button
               key={s}
               onClick={() => setDiceSides(s)}
-              className={`w-11 h-11 rounded text-xs font-bold font-gothic ${
+              className={`w-11 h-11 rounded text-xs font-bold font-gothic transition-all ${
                 diceSides === s
                   ? 'gd-btn-gold'
                   : 'gd-btn'
@@ -54,9 +60,9 @@ export function DiceRoller() {
 
         <button
           onClick={roll}
-          className="flex-1 gd-btn-gold py-1 px-3 rounded transition-colors font-gothic"
+          className="flex-1 gd-btn-roll py-1 px-3 rounded font-gothic text-sm"
         >
-          ⚄ Roll
+          ⚄ ROLL
         </button>
       </div>
 
@@ -66,7 +72,7 @@ export function DiceRoller() {
             {results.map((r, i) => (
               <div
                 key={i}
-                className={`w-10 h-10 flex items-center justify-center rounded text-lg ${
+                className={`w-10 h-10 flex items-center justify-center rounded text-lg font-bold ${
                   r === 1
                     ? 'gd-die-fail'
                     : r === diceSides
@@ -79,8 +85,8 @@ export function DiceRoller() {
             ))}
           </div>
           {results.length > 1 && (
-            <div className="text-sm gd-bone opacity-60">
-              Total: <span className="gd-gold font-bold font-gothic">{total}</span>
+            <div className="text-sm gd-bone opacity-60 font-mono">
+              Total: <span className="gd-gold font-bold font-gothic text-base">{total}</span>
             </div>
           )}
         </div>

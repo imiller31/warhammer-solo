@@ -40,7 +40,7 @@ export function UnitCard({
       <div className="gd-panel gd-destroyed rounded-lg p-3">
         <div className="flex justify-between items-center">
           <span className="line-through gd-bone opacity-50 font-gothic">{unit.name}</span>
-          <span className="text-xs text-[#cc4444] font-gothic font-bold tracking-wider">DESTROYED</span>
+          <span className="text-xs text-[#cc4444] font-gothic font-bold tracking-wider">☠ DESTROYED</span>
         </div>
       </div>
     );
@@ -61,7 +61,7 @@ export function UnitCard({
         {onDeployFromReserve && (
           <button
             onClick={onDeployFromReserve}
-            className="w-full gd-deploy-btn py-2 px-4 rounded transition-colors text-sm"
+            className="w-full gd-deploy-btn py-2 px-4 rounded transition-all text-sm"
           >
             🪂 Deploy from Reserve
           </button>
@@ -74,10 +74,10 @@ export function UnitCard({
   }
 
   return (
-    <div className={`gd-panel ${cardClass} rounded-lg overflow-hidden ${isOathTarget ? 'gd-oath-glow' : ''} ${unitState.isBattleshocked ? 'gd-battleshock' : ''}`}>
+    <div className={`gd-panel gd-worn ${cardClass} rounded-lg overflow-hidden ${isOathTarget ? 'gd-oath-glow' : ''} ${unitState.isBattleshocked ? 'gd-battleshock' : ''}`}>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full p-3 text-left hover:bg-white/[0.03] transition-colors"
+        className="w-full p-3 text-left hover:bg-white/[0.03] transition-all"
       >
         <div className="flex justify-between items-start">
           <div>
@@ -113,8 +113,8 @@ export function UnitCard({
       </button>
 
       {expanded && (
-        <div className="border-t border-[#3a3a4a] p-3 space-y-3">
-          {/* Stat block */}
+        <div className="gd-card-expand border-t border-[#3a3a4a] p-3 space-y-3">
+          {/* Stat block — datasheet stamp */}
           <div className="gd-stat-grid rounded overflow-hidden">
             {[
               ['M', unit.movement],
@@ -160,7 +160,11 @@ export function UnitCard({
             </div>
           )}
 
-          <div className="border-t border-[#3a3a4a] pt-2 space-y-2">
+          <div className="gd-section-divider">
+            <span className="gd-section-diamond"></span>
+          </div>
+
+          <div className="space-y-2">
             <h4 className="text-xs gd-gold-dim uppercase font-gothic tracking-wider">Tracking</h4>
             {unit.modelCount > 1 ? (
               <div className="flex items-center gap-2">
@@ -193,7 +197,7 @@ export function UnitCard({
             <div className="flex gap-2">
               <button
                 onClick={onToggleBattleshock}
-                className={`flex-1 text-xs py-2 px-2 rounded border transition-colors ${
+                className={`flex-1 text-xs py-2 px-2 rounded border transition-all ${
                   unitState.isBattleshocked
                     ? 'border-yellow-500 bg-yellow-900/20 text-yellow-300'
                     : 'gd-btn'
@@ -203,7 +207,7 @@ export function UnitCard({
               </button>
               <button
                 onClick={onDestroy}
-                className="flex-1 text-xs py-2 px-2 rounded gd-btn-danger transition-colors"
+                className="flex-1 text-xs py-2 px-2 rounded gd-btn-danger transition-all"
               >
                 ☠ Destroy Unit
               </button>
