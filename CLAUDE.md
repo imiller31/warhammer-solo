@@ -127,6 +127,15 @@ Each unit gets a **role** that determines its behavior:
 - **Game log improvements**: Scrollable with max height (auto-scrolls to bottom). Each entry tagged with [Round Phase] prefix. Color-coded: player actions blue, AI actions red, system events gray. Collapsible.
 - **Core Stratagems reference**: Collapsible section listing all 8 core stratagems (Command Re-roll, Insane Bravery, Fire Overwatch, Rapid Ingress, Go to Ground, Heroic Intervention, Counter-Offensive, Epic Challenge) with timing, CP cost, and effects.
 
+### ✅ PWA & Mobile Compatibility
+- **PWA manifest + service worker**: `vite-plugin-pwa` with generateSW strategy, manifest.json, SVG skull/aquila icons (192x192, 512x512). Installable on iOS and Android.
+- **iOS Safari fixes**: `overscroll-behavior: none` (no pull-to-refresh), `-webkit-overflow-scrolling: touch`, safe area inset padding for notch phones, rubber-band prevention on `#root` with `100dvh`, `-webkit-user-select: none` on buttons.
+- **Touch targets**: All +/- buttons upgraded from w-7 h-7 (28px) to w-10 h-10 (40px) or w-11 h-11 (44px) meeting Apple HIG minimums. ScoreBoard, DiceRoller, and UnitCard buttons all fixed.
+- **Viewport**: `maximum-scale=1` prevents pinch zoom. All inputs ≥16px font to prevent iOS auto-zoom.
+- **Performance**: `will-change: transform` on animated elements. CoreStratagems lazy-loaded via `React.lazy`. localStorage saves debounced (500ms).
+- **Offline**: Service worker precaches all assets (8 entries). No CDN dependencies.
+- **Install prompt**: Dismissable "Add to Home Screen" banner, remembers dismissal in localStorage.
+
 ### 🔲 Not Yet Implemented
 - Turn timer or phase auto-advance
 - Additional factions beyond SM/Tyranids
