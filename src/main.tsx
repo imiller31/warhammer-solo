@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
+import { InstallPrompt } from './components/InstallPrompt.tsx'
 
 const rootEl = document.getElementById('root');
 if (!rootEl) {
@@ -13,6 +14,7 @@ createRoot(rootEl).render(
   <StrictMode>
     <ErrorBoundary>
       <App />
+      <InstallPrompt />
     </ErrorBoundary>
   </StrictMode>,
 )

@@ -1,1 +1,45 @@
 @import "tailwindcss";
+
+/* iOS Safari fixes */
+html, body {
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  padding:
+    env(safe-area-inset-top)
+    env(safe-area-inset-right)
+    env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
+/* Prevent text selection and double-tap zoom on interactive elements */
+button, [role="button"], input, select {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* Ensure inputs don't trigger iOS auto-zoom (must be >= 16px) */
+input, select, textarea {
+  font-size: 16px;
+}
+
+/* Scrollable areas */
+.overflow-y-auto, .overflow-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Performance: will-change for animated elements */
+.transition-colors, .transition-all {
+  will-change: transform;
+}
+
+/* Prevent iOS rubber-banding on main container */
+#root {
+  overflow: auto;
+  height: 100vh;
+  height: 100dvh;
+  overscroll-behavior: none;
+}

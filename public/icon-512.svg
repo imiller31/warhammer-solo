@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="24" fill="#1a1a2e"/>
+  <g transform="translate(96,96)" fill="none" stroke="#d4a030" stroke-width="3" stroke-linecap="round">
+    <!-- Skull -->
+    <ellipse cx="0" cy="-10" rx="32" ry="36" fill="#1a1a2e" stroke="#d4a030"/>
+    <!-- Eyes -->
+    <ellipse cx="-12" cy="-18" rx="8" ry="10" fill="#d4a030"/>
+    <ellipse cx="12" cy="-18" rx="8" ry="10" fill="#d4a030"/>
+    <ellipse cx="-12" cy="-18" rx="4" ry="5" fill="#1a1a2e"/>
+    <ellipse cx="12" cy="-18" rx="4" ry="5" fill="#1a1a2e"/>
+    <!-- Nose -->
+    <path d="M-4 -6 L0 -2 L4 -6" fill="none"/>
+    <!-- Teeth -->
+    <line x1="-14" y1="8" x2="-14" y2="16"/>
+    <line x1="-7" y1="8" x2="-7" y2="18"/>
+    <line x1="0" y1="8" x2="0" y2="18"/>
+    <line x1="7" y1="8" x2="7" y2="18"/>
+    <line x1="14" y1="8" x2="14" y2="16"/>
+    <line x1="-18" y1="8" x2="18" y2="8"/>
+    <!-- Wings (Aquila) -->
+    <path d="M-34 -10 Q-55 -40 -70 -20 Q-55 -25 -38 -16" fill="#d4a030" opacity="0.8"/>
+    <path d="M34 -10 Q55 -40 70 -20 Q55 -25 38 -16" fill="#d4a030" opacity="0.8"/>
+    <!-- Wing feathers -->
+    <path d="M-42 -14 Q-60 -50 -78 -28" stroke-width="2" opacity="0.5"/>
+    <path d="M42 -14 Q60 -50 78 -28" stroke-width="2" opacity="0.5"/>
+  </g>
+</svg>

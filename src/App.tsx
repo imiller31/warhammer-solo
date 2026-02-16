@@ -1,4 +1,4 @@
-import { useReducer, useCallback, useEffect, useState } from 'react';
+import { useReducer, useCallback, useEffect, useState, lazy, Suspense } from 'react';
 import type { FactionData, Mission, GameState } from './types';
 import { PHASE_LABELS } from './types';
 import { gameReducer } from './engine/phase-sequencer';
@@ -10,8 +10,9 @@ import { ScoreBoard } from './components/ScoreBoard';
 import { DiceRoller } from './components/DiceRoller';
 import { GameSetup } from './components/GameSetup';
 import { GameLog } from './components/GameLog';
-import { CoreStratagems } from './components/CoreStratagems';
 import { loadSavedGame, saveGame, clearSave } from './lib/storage';
+
+const CoreStratagems = lazy(() => import('./components/CoreStratagems').then(m => ({ default: m.CoreStratagems })));
 
 const emptyState: GameState = {
   turn: 0,
@@ -277,7 +278,9 @@ export default function App() {
           </div>
         </div>
 
-        <CoreStratagems />
+        <Suspense fallback={<div className="bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-500 text-sm">Loading stratagems…</div>}>
+          <CoreStratagems />
+        </Suspense>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <DiceRoller />

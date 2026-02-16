@@ -27,15 +27,15 @@ export function ScoreBoard({
           <h3 className="text-blue-400 font-semibold text-sm truncate">{playerFactionName}</h3>
           <div className="flex items-center gap-1 sm:gap-2">
             <span className="text-xs text-gray-500 w-6">VP</span>
-            <button onClick={() => onAdjustVP('player', -1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-7 h-7 sm:w-6 sm:h-6 rounded text-xs font-bold">−</button>
+            <button onClick={() => onAdjustVP('player', -1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-11 h-11 rounded text-xs font-bold">−</button>
             <span className="text-xl font-bold text-blue-300 w-8 text-center">{playerVP}</span>
-            <button onClick={() => onAdjustVP('player', 1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-7 h-7 sm:w-6 sm:h-6 rounded text-xs font-bold">+</button>
+            <button onClick={() => onAdjustVP('player', 1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-11 h-11 rounded text-xs font-bold">+</button>
           </div>
           <div className="flex items-center gap-1 sm:gap-2">
             <span className="text-xs text-gray-500 w-6">CP</span>
-            <button onClick={() => onAdjustCP('player', -1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-7 h-7 sm:w-6 sm:h-6 rounded text-xs font-bold">−</button>
+            <button onClick={() => onAdjustCP('player', -1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-11 h-11 rounded text-xs font-bold">−</button>
             <span className="text-xl font-bold text-yellow-300 w-8 text-center">{playerCP}</span>
-            <button onClick={() => onAdjustCP('player', 1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-7 h-7 sm:w-6 sm:h-6 rounded text-xs font-bold">+</button>
+            <button onClick={() => onAdjustCP('player', 1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-11 h-11 rounded text-xs font-bold">+</button>
           </div>
         </div>
 
@@ -43,15 +43,15 @@ export function ScoreBoard({
           <h3 className="text-red-400 font-semibold text-sm truncate">{aiFactionName}</h3>
           <div className="flex items-center gap-1 sm:gap-2">
             <span className="text-xs text-gray-500 w-6">VP</span>
-            <button onClick={() => onAdjustVP('ai', -1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-7 h-7 sm:w-6 sm:h-6 rounded text-xs font-bold">−</button>
+            <button onClick={() => onAdjustVP('ai', -1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-11 h-11 rounded text-xs font-bold">−</button>
             <span className="text-xl font-bold text-red-300 w-8 text-center">{aiVP}</span>
-            <button onClick={() => onAdjustVP('ai', 1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-7 h-7 sm:w-6 sm:h-6 rounded text-xs font-bold">+</button>
+            <button onClick={() => onAdjustVP('ai', 1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-11 h-11 rounded text-xs font-bold">+</button>
           </div>
           <div className="flex items-center gap-1 sm:gap-2">
             <span className="text-xs text-gray-500 w-6">CP</span>
-            <button onClick={() => onAdjustCP('ai', -1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-7 h-7 sm:w-6 sm:h-6 rounded text-xs font-bold">−</button>
+            <button onClick={() => onAdjustCP('ai', -1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-11 h-11 rounded text-xs font-bold">−</button>
             <span className="text-xl font-bold text-yellow-300 w-8 text-center">{aiCP}</span>
-            <button onClick={() => onAdjustCP('ai', 1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-7 h-7 sm:w-6 sm:h-6 rounded text-xs font-bold">+</button>
+            <button onClick={() => onAdjustCP('ai', 1)} className="bg-gray-700 hover:bg-gray-600 active:bg-gray-500 w-11 h-11 rounded text-xs font-bold">+</button>
           </div>
         </div>
       </div>

@@ -25,12 +25,12 @@ export function DiceRoller() {
         <div className="flex items-center gap-1">
           <button
             onClick={() => setDiceCount(Math.max(1, diceCount - 1))}
-            className="bg-gray-700 hover:bg-gray-600 w-7 h-7 rounded text-sm"
+            className="bg-gray-700 hover:bg-gray-600 w-10 h-10 rounded text-sm font-bold"
           >-</button>
           <span className="text-sm font-mono w-6 text-center">{diceCount}</span>
           <button
             onClick={() => setDiceCount(Math.min(20, diceCount + 1))}
-            className="bg-gray-700 hover:bg-gray-600 w-7 h-7 rounded text-sm"
+            className="bg-gray-700 hover:bg-gray-600 w-10 h-10 rounded text-sm font-bold"
           >+</button>
         </div>
 
@@ -41,7 +41,7 @@ export function DiceRoller() {
             <button
               key={s}
               onClick={() => setDiceSides(s)}
-              className={`w-8 h-7 rounded text-xs font-bold ${
+              className={`w-10 h-10 rounded text-xs font-bold ${
                 diceSides === s
                   ? 'bg-amber-600 text-black'
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'

@@ -11,7 +11,6 @@ export function isValidGameState(data: unknown): data is GameState {
   if (data === null || typeof data !== 'object') return false;
   const obj = data as Record<string, unknown>;
 
-  // Check critical primitive fields
   if (typeof obj['turn'] !== 'number') return false;
   if (typeof obj['battleRound'] !== 'number') return false;
   if (typeof obj['phase'] !== 'string') return false;
@@ -22,16 +21,13 @@ export function isValidGameState(data: unknown): data is GameState {
   if (typeof obj['playerCP'] !== 'number') return false;
   if (typeof obj['aiCP'] !== 'number') return false;
 
-  // Check arrays exist
   if (!Array.isArray(obj['playerUnits'])) return false;
   if (!Array.isArray(obj['aiUnits'])) return false;
   if (!Array.isArray(obj['turnLog'])) return false;
 
-  // Check faction objects
   if (typeof obj['playerFaction'] !== 'object' || obj['playerFaction'] === null) return false;
   if (typeof obj['aiFaction'] !== 'object' || obj['aiFaction'] === null) return false;
 
-  // Check mission object
   if (typeof obj['mission'] !== 'object' || obj['mission'] === null) return false;
 
   return true;
@@ -46,7 +42,6 @@ export function loadSavedGame(): GameState | null {
     if (isValidGameState(parsed)) {
       return parsed;
     }
-    // Invalid shape — clear corrupt save
     localStorage.removeItem(SAVE_KEY);
     return null;
   } catch {
@@ -54,14 +49,20 @@ export function loadSavedGame(): GameState | null {
   }
 }
 
-/** Save game state to localStorage. */
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+/** Save game state to localStorage (debounced 500ms). */
 export function saveGame(state: GameState): void {
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
-  } catch { /* ignore quota errors */ }
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+    } catch { /* ignore quota errors */ }
+  }, 500);
 }
 
 /** Clear saved game from localStorage. */
 export function clearSave(): void {
+  if (saveTimer) clearTimeout(saveTimer);
   localStorage.removeItem(SAVE_KEY);
 }

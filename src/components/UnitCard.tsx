@@ -161,12 +161,12 @@ export function UnitCard({
                 <span className="text-xs text-gray-400">Models:</span>
                 <button
                   onClick={() => onUpdateModels(Math.max(0, unitState.modelsRemaining - 1))}
-                  className="bg-gray-700 hover:bg-gray-600 text-white w-7 h-7 rounded text-sm"
+                  className="bg-gray-700 hover:bg-gray-600 text-white w-10 h-10 rounded text-sm font-bold"
                 >-</button>
                 <span className="text-sm font-mono w-8 text-center">{unitState.modelsRemaining}</span>
                 <button
                   onClick={() => onUpdateModels(Math.min(unit.modelCount, unitState.modelsRemaining + 1))}
-                  className="bg-gray-700 hover:bg-gray-600 text-white w-7 h-7 rounded text-sm"
+                  className="bg-gray-700 hover:bg-gray-600 text-white w-10 h-10 rounded text-sm font-bold"
                 >+</button>
               </div>
             ) : (
@@ -174,12 +174,12 @@ export function UnitCard({
                 <span className="text-xs text-gray-400">Wounds:</span>
                 <button
                   onClick={() => onUpdateWounds(Math.max(0, unitState.currentWounds - 1))}
-                  className="bg-gray-700 hover:bg-gray-600 text-white w-7 h-7 rounded text-sm"
+                  className="bg-gray-700 hover:bg-gray-600 text-white w-10 h-10 rounded text-sm font-bold"
                 >-</button>
                 <span className="text-sm font-mono w-8 text-center">{unitState.currentWounds}</span>
                 <button
                   onClick={() => onUpdateWounds(Math.min(unit.wounds, unitState.currentWounds + 1))}
-                  className="bg-gray-700 hover:bg-gray-600 text-white w-7 h-7 rounded text-sm"
+                  className="bg-gray-700 hover:bg-gray-600 text-white w-10 h-10 rounded text-sm font-bold"
                 >+</button>
               </div>
             )}
