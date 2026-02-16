@@ -18,33 +18,33 @@ export function DiceRoller() {
   const total = results.reduce((s, v) => s + v, 0);
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-      <h2 className="text-lg font-bold text-amber-400 mb-3">Dice Roller</h2>
+    <div className="gd-panel-riveted rounded-lg p-4">
+      <h2 className="text-lg font-gothic font-bold gd-gold mb-3 tracking-wider">Dice Roller</h2>
 
       <div className="flex gap-2 mb-3">
         <div className="flex items-center gap-1">
           <button
             onClick={() => setDiceCount(Math.max(1, diceCount - 1))}
-            className="bg-gray-700 hover:bg-gray-600 w-10 h-10 rounded text-sm font-bold"
+            className="gd-btn w-11 h-11 rounded text-sm font-bold"
           >-</button>
-          <span className="text-sm font-mono w-6 text-center">{diceCount}</span>
+          <span className="text-sm font-mono w-6 text-center gd-parchment">{diceCount}</span>
           <button
             onClick={() => setDiceCount(Math.min(20, diceCount + 1))}
-            className="bg-gray-700 hover:bg-gray-600 w-10 h-10 rounded text-sm font-bold"
+            className="gd-btn w-11 h-11 rounded text-sm font-bold"
           >+</button>
         </div>
 
-        <span className="text-gray-500 self-center">D</span>
+        <span className="gd-bone opacity-40 self-center font-gothic">D</span>
 
         <div className="flex gap-1">
           {[3, 6].map((s) => (
             <button
               key={s}
               onClick={() => setDiceSides(s)}
-              className={`w-10 h-10 rounded text-xs font-bold ${
+              className={`w-11 h-11 rounded text-xs font-bold font-gothic ${
                 diceSides === s
-                  ? 'bg-amber-600 text-black'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  ? 'gd-btn-gold'
+                  : 'gd-btn'
               }`}
             >
               {s}
@@ -54,9 +54,9 @@ export function DiceRoller() {
 
         <button
           onClick={roll}
-          className="flex-1 bg-amber-600 hover:bg-amber-500 text-black font-bold py-1 px-3 rounded transition-colors"
+          className="flex-1 gd-btn-gold py-1 px-3 rounded transition-colors font-gothic"
         >
-          Roll
+          ⚄ Roll
         </button>
       </div>
 
@@ -66,12 +66,12 @@ export function DiceRoller() {
             {results.map((r, i) => (
               <div
                 key={i}
-                className={`w-9 h-9 flex items-center justify-center rounded font-bold text-lg border ${
+                className={`w-10 h-10 flex items-center justify-center rounded text-lg ${
                   r === 1
-                    ? 'border-red-500 text-red-400 bg-red-900/20'
+                    ? 'gd-die-fail'
                     : r === diceSides
-                      ? 'border-green-500 text-green-400 bg-green-900/20'
-                      : 'border-gray-600 text-gray-200 bg-gray-800'
+                      ? 'gd-die-crit'
+                      : 'gd-die'
                 }`}
               >
                 {r}
@@ -79,8 +79,8 @@ export function DiceRoller() {
             ))}
           </div>
           {results.length > 1 && (
-            <div className="text-sm text-gray-400">
-              Total: <span className="text-amber-400 font-bold">{total}</span>
+            <div className="text-sm gd-bone opacity-60">
+              Total: <span className="gd-gold font-bold font-gothic">{total}</span>
             </div>
           )}
         </div>

@@ -22,27 +22,27 @@ export function CoreStratagems() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
+    <div className="gd-panel rounded-lg overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full p-3 flex items-center justify-between hover:bg-gray-800/50 transition-colors"
+        className="w-full p-3 flex items-center justify-between hover:bg-white/[0.03] transition-colors"
       >
-        <h2 className="text-sm font-bold text-amber-400 uppercase">Core Stratagems Reference</h2>
-        <span className="text-xs text-gray-500">{open ? '▲' : '▼'}</span>
+        <h2 className="text-sm font-gothic font-bold gd-gold uppercase tracking-wider">Core Stratagems Reference</h2>
+        <span className="text-xs gd-bone opacity-30">{open ? '▲' : '▼'}</span>
       </button>
       {open && (
-        <div className="border-t border-gray-700 p-3 space-y-2">
-          <p className="text-xs text-gray-500 mb-2">Available to both players. Each can only be used once per phase.</p>
+        <div className="border-t border-[#3a3a4a] p-3 space-y-2">
+          <p className="text-xs gd-bone opacity-40 mb-2">Available to both players. Each can only be used once per phase.</p>
           {CORE_STRATAGEMS.map((s) => (
-            <div key={s.name} className="bg-gray-800 rounded p-2">
+            <div key={s.name} className="bg-[#12121e] border-l-2 border-[#c9a227]/50 rounded p-2">
               <div className="flex justify-between items-start">
-                <span className="text-sm font-semibold text-gray-200">{s.name}</span>
-                <span className="text-xs px-2 py-0.5 rounded bg-yellow-900/50 text-yellow-300 shrink-0 ml-2">
+                <span className="text-sm font-gothic font-semibold gd-parchment">{s.name}</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-[#c9a227]/15 gd-gold shrink-0 ml-2 font-gothic">
                   {s.cpCost}CP
                 </span>
               </div>
-              <div className="text-xs text-amber-400 mt-0.5">{s.timing}</div>
-              <div className="text-xs text-gray-400 mt-1">{s.effect}</div>
+              <div className="text-xs gd-gold-dim mt-0.5">{s.timing}</div>
+              <div className="text-xs gd-bone opacity-60 mt-1">{s.effect}</div>
             </div>
           ))}
         </div>

@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════
+   GRIMDARK 40K THEME
+   ═══════════════════════════════════════════ */
+
 /* iOS Safari fixes */
 html, body {
   overscroll-behavior: none;
@@ -12,6 +16,8 @@ body {
     env(safe-area-inset-right)
     env(safe-area-inset-bottom)
     env(safe-area-inset-left);
+  background: #0a0a0f;
+  color: #e8dcc8;
 }
 
 /* Prevent text selection and double-tap zoom on interactive elements */
@@ -42,4 +48,340 @@ input, select, textarea {
   height: 100vh;
   height: 100dvh;
   overscroll-behavior: none;
+}
+
+/* ═══════════════════════════════════════════
+   GOTHIC TYPOGRAPHY
+   ═══════════════════════════════════════════ */
+
+.font-gothic {
+  font-family: 'Cinzel', 'Georgia', serif;
+}
+
+h1, h2, h3 {
+  font-family: 'Cinzel', 'Georgia', serif;
+}
+
+/* ═══════════════════════════════════════════
+   GRIMDARK PANELS & CARDS
+   ═══════════════════════════════════════════ */
+
+.gd-panel {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+  border: 1px solid #3a3a4a;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 215, 0, 0.05),
+    0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.gd-panel-riveted {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+  border: 2px solid #3a3a4a;
+  box-shadow:
+    inset 0 0 0 1px #2a2a3a,
+    inset 0 1px 0 rgba(255, 215, 0, 0.05),
+    0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Imperial gold accent */
+.gd-gold {
+  color: #d4af37;
+}
+
+.gd-gold-dim {
+  color: #c9a227;
+}
+
+/* Parchment text */
+.gd-parchment {
+  color: #e8dcc8;
+}
+
+.gd-bone {
+  color: #cfc0a8;
+}
+
+/* ═══════════════════════════════════════════
+   HEADER — COMMAND CONSOLE
+   ═══════════════════════════════════════════ */
+
+.gd-header {
+  background: linear-gradient(180deg, #1a1a2e 0%, #12121e 100%);
+  border-bottom: 2px solid #3a3a4a;
+  box-shadow:
+    0 2px 0 #c9a22740,
+    0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.gd-header::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c9a22780, transparent);
+  margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════════
+   BUTTONS — WEATHERED METAL
+   ═══════════════════════════════════════════ */
+
+.gd-btn {
+  background: linear-gradient(180deg, #4a4a5a 0%, #2a2a3a 100%);
+  border: 1px solid #5a5a6a;
+  color: #e8dcc8;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.15s ease;
+}
+
+.gd-btn:hover {
+  background: linear-gradient(180deg, #5a5a6a 0%, #3a3a4a 100%);
+}
+
+.gd-btn:active {
+  background: linear-gradient(180deg, #2a2a3a 0%, #3a3a4a 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.gd-btn-gold {
+  background: linear-gradient(180deg, #d4af37 0%, #9a7b20 100%);
+  border: 1px solid #d4af37;
+  color: #0a0a0f;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.gd-btn-gold:hover {
+  background: linear-gradient(180deg, #e0bf47 0%, #b08f28 100%);
+}
+
+.gd-btn-danger {
+  background: linear-gradient(180deg, #8b0000 0%, #5a0000 100%);
+  border: 1px solid #a83232;
+  color: #e8dcc8;
+}
+
+.gd-btn-danger:hover {
+  background: linear-gradient(180deg, #a83232 0%, #6b0000 100%);
+}
+
+/* ═══════════════════════════════════════════
+   UNIT CARDS
+   ═══════════════════════════════════════════ */
+
+.gd-card-player {
+  border-top: 4px solid #4a6fa5;
+}
+
+.gd-card-ai {
+  border-top: 4px solid #8b0000;
+}
+
+/* Oath target glow */
+.gd-oath-glow {
+  box-shadow:
+    0 0 8px rgba(139, 0, 0, 0.6),
+    0 0 20px rgba(139, 0, 0, 0.3),
+    inset 0 0 8px rgba(139, 0, 0, 0.15);
+  border-color: #a83232 !important;
+}
+
+/* Destroyed unit — scorched */
+.gd-destroyed {
+  opacity: 0.4;
+  filter: saturate(0.2) brightness(0.6);
+  background: linear-gradient(135deg, #1a1008 0%, #120a04 100%) !important;
+  border-color: #3a2a1a !important;
+}
+
+/* Reserve — holographic */
+.gd-reserve {
+  background: linear-gradient(135deg, rgba(74, 111, 165, 0.1) 0%, rgba(26, 26, 46, 0.9) 100%) !important;
+  box-shadow:
+    0 0 12px rgba(74, 111, 165, 0.2),
+    inset 0 0 12px rgba(74, 111, 165, 0.05);
+  border-color: #4a6fa5 !important;
+}
+
+/* ═══════════════════════════════════════════
+   BATTLESHOCK PULSE
+   ═══════════════════════════════════════════ */
+
+@keyframes battleshock-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px rgba(234, 179, 8, 0.3); }
+  50% { opacity: 0.7; box-shadow: 0 0 12px rgba(234, 179, 8, 0.6); }
+}
+
+.gd-battleshock {
+  animation: battleshock-pulse 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════
+   DEPLOY BUTTON — PULSING BORDER
+   ═══════════════════════════════════════════ */
+
+@keyframes deploy-pulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(74, 111, 165, 0.4); border-color: #4a6fa5; }
+  50% { box-shadow: 0 0 16px rgba(74, 111, 165, 0.8); border-color: #6a8fc5; }
+}
+
+.gd-deploy-btn {
+  animation: deploy-pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(180deg, #4a6fa5 0%, #2a4a7a 100%);
+  border: 2px solid #4a6fa5;
+  color: #e8dcc8;
+  font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════
+   GAME LOG — DATA-SLATE CRT
+   ═══════════════════════════════════════════ */
+
+.gd-dataslate {
+  font-family: 'Courier New', 'Consolas', monospace;
+  color: #88cc88;
+  background: #0a0f0a;
+  border: 1px solid #2a3a2a;
+  text-shadow: 0 0 2px rgba(136, 204, 136, 0.3);
+}
+
+.gd-dataslate-line {
+  color: #88cc88;
+}
+
+.gd-dataslate-dim {
+  color: #557755;
+}
+
+.gd-dataslate-separator {
+  color: #aacc66;
+}
+
+/* ═══════════════════════════════════════════
+   SCORE — BRASS COUNTERS
+   ═══════════════════════════════════════════ */
+
+.gd-brass-counter {
+  color: #d4af37;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  font-family: 'Cinzel', serif;
+}
+
+/* ═══════════════════════════════════════════
+   PHASE TRACKER — COGITATOR
+   ═══════════════════════════════════════════ */
+
+.gd-cogitator {
+  background: linear-gradient(135deg, #12121e 0%, #1a1a2e 100%);
+  border: 1px solid #3a3a4a;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+
+.gd-phase-bar {
+  background: #2a2a3a;
+  height: 3px;
+}
+
+.gd-phase-bar-active {
+  background: linear-gradient(90deg, #c9a227, #d4af37);
+  box-shadow: 0 0 4px rgba(212, 175, 55, 0.4);
+}
+
+.gd-phase-bar-done {
+  background: #8a7020;
+}
+
+/* ═══════════════════════════════════════════
+   DICE ROLLER
+   ═══════════════════════════════════════════ */
+
+.gd-die {
+  background: linear-gradient(135deg, #3a3a4a, #2a2a3a);
+  border: 1px solid #5a5a6a;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.4);
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+}
+
+.gd-die-crit {
+  border-color: #4a8a4a;
+  color: #88cc88;
+  background: linear-gradient(135deg, #1a3a1a, #0a2a0a);
+  box-shadow: 0 0 6px rgba(74, 138, 74, 0.3);
+}
+
+.gd-die-fail {
+  border-color: #8b0000;
+  color: #cc4444;
+  background: linear-gradient(135deg, #3a1a1a, #2a0a0a);
+  box-shadow: 0 0 6px rgba(139, 0, 0, 0.3);
+}
+
+/* ═══════════════════════════════════════════
+   STAT BLOCK
+   ═══════════════════════════════════════════ */
+
+.gd-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 2px;
+  background: #2a2a3a;
+  border: 1px solid #4a4a5a;
+  padding: 1px;
+}
+
+.gd-stat-cell {
+  background: #1a1a2e;
+  text-align: center;
+  padding: 2px 0;
+}
+
+.gd-stat-label {
+  font-size: 9px;
+  color: #8a7a6a;
+  text-transform: uppercase;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.5px;
+}
+
+.gd-stat-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e8dcc8;
+  font-family: 'Cinzel', serif;
+}
+
+/* ═══════════════════════════════════════════
+   WEAPON READOUT
+   ═══════════════════════════════════════════ */
+
+.gd-weapon {
+  background: #12121e;
+  border-left: 2px solid #4a4a5a;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+}
+
+/* ═══════════════════════════════════════════
+   ROLE BADGES
+   ═══════════════════════════════════════════ */
+
+.gd-badge {
+  clip-path: polygon(6px 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0 50%);
+  padding: 2px 12px;
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-family: 'Cinzel', serif;
+}
+
+/* ═══════════════════════════════════════════
+   BACKGROUND
+   ═══════════════════════════════════════════ */
+
+.gd-bg {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(139, 0, 0, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(26, 26, 46, 0.4) 0%, transparent 50%),
+    #0a0a0f;
 }

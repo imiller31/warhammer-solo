@@ -29,9 +29,9 @@ export function AIDecision({ decisions, phaseName, turnSide, state, onSetOathTar
 
   if (decisions.length === 0 && !showShadowButton) {
     return (
-      <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-        <h2 className="text-lg font-bold text-red-400 mb-2">AI Decisions</h2>
-        <p className="text-gray-500 text-sm italic">
+      <div className="gd-panel rounded-lg p-4">
+        <h2 className="text-lg font-gothic font-bold text-[#a83232] mb-2 tracking-wider">AI Decisions</h2>
+        <p className="gd-bone opacity-40 text-sm italic">
           No AI decisions for this phase.
         </p>
       </div>
@@ -39,33 +39,33 @@ export function AIDecision({ decisions, phaseName, turnSide, state, onSetOathTar
   }
 
   return (
-    <div className={`bg-gray-900 rounded-lg p-4 ${
+    <div className={`gd-panel rounded-lg p-4 ${
       isPlayerTurn
-        ? 'border border-yellow-900/50'
-        : 'border border-red-900/50'
+        ? 'border-[#c9a227]/30'
+        : 'border-[#8b0000]/30'
     }`}>
-      <h2 className={`text-lg font-bold mb-3 ${isPlayerTurn ? 'text-yellow-400' : 'text-red-400'}`}>
+      <h2 className={`text-lg font-gothic font-bold mb-3 tracking-wider ${isPlayerTurn ? 'gd-gold' : 'text-[#a83232]'}`}>
         {isPlayerTurn
           ? `⚡ AI Reactions — ${phaseName}`
-          : `AI Orders — ${phaseName}`
+          : `☠ AI Orders — ${phaseName}`
         }
       </h2>
 
       {/* Oath of Moment confirmation */}
       {recommendedOathId && onSetOathTarget && (
-        <div className="mb-3 bg-amber-900/30 border border-amber-700 rounded p-3">
-          <div className="text-sm font-bold text-amber-300 mb-1">💀 Oath of Moment</div>
-          <p className="text-xs text-gray-300 mb-2">
-            Target <span className="text-amber-400 font-semibold">{recommendedOathTarget}</span> — re-roll all hit rolls against this unit.
+        <div className="mb-3 bg-[#8b0000]/15 border border-[#a83232]/50 rounded p-3" style={{ boxShadow: '0 0 12px rgba(139, 0, 0, 0.2)' }}>
+          <div className="text-sm font-gothic font-bold gd-gold mb-1">💀 Oath of Moment</div>
+          <p className="text-xs gd-parchment mb-2">
+            Target <span className="gd-gold font-semibold">{recommendedOathTarget}</span> — re-roll all hit rolls against this unit.
           </p>
           <button
             onClick={() => onSetOathTarget(recommendedOathId)}
-            className="bg-amber-600 hover:bg-amber-500 text-black font-bold py-1.5 px-4 rounded text-sm transition-colors"
+            className="gd-btn-gold py-1.5 px-4 rounded text-sm transition-colors"
           >
             Confirm Oath Target
           </button>
           {state.oathOfMomentTarget && state.oathOfMomentTarget !== recommendedOathId && (
-            <span className="text-xs text-gray-500 ml-2">
+            <span className="text-xs gd-bone opacity-40 ml-2">
               (Current: {state.playerFaction.units.find((u) => u.id === state.oathOfMomentTarget)?.name})
             </span>
           )}
@@ -74,15 +74,15 @@ export function AIDecision({ decisions, phaseName, turnSide, state, onSetOathTar
 
       {/* Shadow in the Warp button */}
       {showShadowButton && onUseShadowInTheWarp && (
-        <div className={`mb-3 rounded p-3 border ${shadowRecommended ? 'bg-purple-900/30 border-purple-600' : 'bg-gray-800 border-gray-600'}`}>
-          <div className="text-sm font-bold text-purple-300 mb-1">🧠 Shadow in the Warp</div>
-          <p className="text-xs text-gray-300 mb-2">
+        <div className={`mb-3 rounded p-3 border ${shadowRecommended ? 'bg-purple-900/20 border-purple-600/50' : 'bg-[#1a1a2e] border-[#3a3a4a]'}`}>
+          <div className="text-sm font-gothic font-bold text-purple-300 mb-1">🧠 Shadow in the Warp</div>
+          <p className="text-xs gd-parchment mb-2">
             All enemy units take Battle-shock tests NOW. Once per battle.
             {shadowRecommended && <span className="text-purple-400 font-semibold"> ⚡ RECOMMENDED</span>}
           </p>
           <button
             onClick={onUseShadowInTheWarp}
-            className="bg-purple-600 hover:bg-purple-500 text-white font-bold py-1.5 px-4 rounded text-sm transition-colors"
+            className="bg-purple-800 hover:bg-purple-700 border border-purple-500 text-purple-100 font-bold py-1.5 px-4 rounded text-sm transition-colors"
           >
             Use Shadow in the Warp
           </button>
@@ -95,27 +95,27 @@ export function AIDecision({ decisions, phaseName, turnSide, state, onSetOathTar
             key={`${d.unitId}-${i}`}
             className={`rounded p-3 ${
               d.isReactive
-                ? 'bg-yellow-900/20 border border-yellow-800/50'
-                : 'bg-gray-800 border border-gray-700'
+                ? 'bg-[#c9a227]/10 border border-[#c9a227]/30'
+                : 'bg-[#12121e] border border-[#3a3a4a]'
             }`}
           >
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 mb-1">
-              <h3 className={`font-bold ${d.isReactive ? 'text-yellow-300' : 'text-red-300'}`}>
+              <h3 className={`font-gothic font-bold ${d.isReactive ? 'gd-gold' : 'text-[#cc4444]'}`}>
                 {d.unitName}
               </h3>
-              <span className={`text-xs px-2 py-0.5 rounded self-start ${
+              <span className={`text-xs px-2 py-0.5 rounded self-start font-gothic ${
                 d.isReactive
-                  ? 'bg-yellow-900/50 text-yellow-300'
-                  : 'bg-red-900/50 text-red-300'
+                  ? 'bg-[#c9a227]/20 gd-gold'
+                  : 'bg-[#8b0000]/20 text-[#cc4444]'
               }`}>
                 {d.action}
               </span>
             </div>
-            <div className="text-xs text-gray-500 mb-2">{d.reasoning}</div>
+            <div className="text-xs gd-bone opacity-40 mb-2">{d.reasoning}</div>
             <ul className="space-y-1">
               {d.details.map((detail, j) => (
-                <li key={j} className="text-sm text-gray-300 flex gap-2">
-                  <span className={`mt-0.5 shrink-0 ${d.isReactive ? 'text-yellow-500' : 'text-red-500'}`}>›</span>
+                <li key={j} className="text-sm gd-parchment flex gap-2">
+                  <span className={`mt-0.5 shrink-0 ${d.isReactive ? 'gd-gold' : 'text-[#cc4444]'}`}>›</span>
                   <span>{detail}</span>
                 </li>
               ))}

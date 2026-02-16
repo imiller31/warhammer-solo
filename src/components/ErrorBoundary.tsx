@@ -28,10 +28,10 @@ export class ErrorBoundary extends Component<Props, State> {
   render(): ReactNode {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
+        <div className="min-h-screen gd-bg flex items-center justify-center p-4">
           <div className="max-w-md w-full text-center space-y-4">
-            <h1 className="text-2xl font-bold text-red-400">Something went wrong</h1>
-            <p className="text-gray-400 text-sm">
+            <h1 className="text-2xl font-gothic font-bold text-[#a83232]">Something went wrong</h1>
+            <p className="gd-bone opacity-60 text-sm">
               {this.state.error?.message ?? 'An unexpected error occurred.'}
             </p>
             <button
@@ -39,7 +39,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 this.setState({ hasError: false, error: null });
                 window.location.reload();
               }}
-              className="bg-amber-600 hover:bg-amber-500 text-black font-bold py-2 px-6 rounded-lg transition-colors"
+              className="gd-btn-gold py-2 px-6 rounded-lg transition-colors"
             >
               Reload App
             </button>

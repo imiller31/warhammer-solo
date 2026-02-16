@@ -93,25 +93,25 @@ export default function App() {
   // Show resume prompt
   if (!gameStarted && showResume && savedGame) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
+      <div className="min-h-screen gd-bg flex items-center justify-center p-4">
         <div className="max-w-lg w-full space-y-6 text-center">
-          <h1 className="text-3xl font-bold text-amber-400">WARHAMMER 40K</h1>
-          <h2 className="text-lg text-gray-400">Solo Combat Patrol</h2>
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 space-y-4">
-            <p className="text-gray-300">Saved game found!</p>
-            <p className="text-sm text-gray-500">
+          <h1 className="text-3xl font-gothic font-bold gd-gold tracking-wider">WARHAMMER 40K</h1>
+          <h2 className="text-lg gd-bone font-gothic tracking-wide">Solo Combat Patrol</h2>
+          <div className="gd-panel-riveted rounded-lg p-6 space-y-4">
+            <p className="gd-parchment">Saved game found!</p>
+            <p className="text-sm gd-bone opacity-60">
               Round {savedGame.battleRound}/5 — {savedGame.playerFaction.name} vs {savedGame.aiFaction.name}
             </p>
             <div className="flex gap-3">
               <button
                 onClick={handleResumeGame}
-                className="flex-1 bg-amber-600 hover:bg-amber-500 text-black font-bold py-3 px-4 rounded-lg transition-colors"
+                className="flex-1 gd-btn-gold py-3 px-4 rounded-lg transition-colors"
               >
                 Continue Game
               </button>
               <button
                 onClick={() => { clearSave(); setShowResume(false); }}
-                className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-3 px-4 rounded-lg transition-colors"
+                className="flex-1 gd-btn py-3 px-4 rounded-lg transition-colors"
               >
                 New Game
               </button>
@@ -129,25 +129,25 @@ export default function App() {
   const isDeployment = state.phase === 'deployment';
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
-      <header className="bg-gray-900 border-b border-gray-800 px-3 sm:px-4 py-3">
+    <div className="min-h-screen gd-bg gd-parchment">
+      <header className="gd-header px-3 sm:px-4 py-3">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-bold text-amber-400">WH40K Solo</h1>
-            <span className="text-xs text-gray-500">{state.mission.name}</span>
+            <h1 className="text-lg font-gothic font-bold gd-gold tracking-wider">WH40K SOLO</h1>
+            <span className="text-xs gd-bone opacity-50 font-gothic">{state.mission.name}</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="text-xs sm:text-sm text-gray-400 text-right">
-              <span className="text-blue-400">{state.playerFaction.name}</span>
+            <div className="text-xs sm:text-sm text-right">
+              <span className="text-[#4a6fa5]">{state.playerFaction.name}</span>
               {' '}vs{' '}
-              <span className="text-red-400">{state.aiFaction.name}</span>
+              <span className="text-[#a83232]">{state.aiFaction.name}</span>
             </div>
             <button
               onClick={handleResetGame}
-              className="text-xs px-2 py-1 rounded border border-gray-600 text-gray-400 hover:border-red-500 hover:text-red-400 transition-colors"
+              className="text-xs px-2 py-1 rounded gd-btn gd-btn-danger transition-colors"
               title="Reset Game"
             >
-              ✕ Reset
+              ✕
             </button>
           </div>
         </div>
@@ -201,7 +201,7 @@ export default function App() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <h2 className="text-sm font-bold text-blue-400 uppercase mb-2">
+            <h2 className="text-sm font-gothic font-bold text-[#4a6fa5] uppercase mb-2 tracking-wider">
               Your Army — {state.playerFaction.name}
             </h2>
             <div className="space-y-2">
@@ -226,13 +226,13 @@ export default function App() {
             </div>
 
             {state.playerFaction.stratagems.length > 0 && (
-              <div className="mt-4 bg-gray-900 border border-gray-700 rounded-lg p-3">
-                <h3 className="text-sm font-bold text-blue-400 mb-2">Stratagems</h3>
+              <div className="mt-4 gd-panel rounded-lg p-3">
+                <h3 className="text-sm font-gothic font-bold text-[#4a6fa5] mb-2">Stratagems</h3>
                 {state.playerFaction.stratagems.map((s) => (
                   <div key={s.name} className="mb-2 text-xs">
-                    <div className="text-gray-200 font-semibold">{s.name} ({s.cpCost}CP) — {s.type}</div>
-                    <div className="text-gray-500">{s.when}</div>
-                    <div className="text-gray-400">{s.effect}</div>
+                    <div className="gd-parchment font-semibold">{s.name} ({s.cpCost}CP) — {s.type}</div>
+                    <div className="gd-bone opacity-40">{s.when}</div>
+                    <div className="gd-bone opacity-60">{s.effect}</div>
                   </div>
                 ))}
               </div>
@@ -240,7 +240,7 @@ export default function App() {
           </div>
 
           <div>
-            <h2 className="text-sm font-bold text-red-400 uppercase mb-2">
+            <h2 className="text-sm font-gothic font-bold text-[#a83232] uppercase mb-2 tracking-wider">
               AI Army — {state.aiFaction.name}
             </h2>
             <div className="space-y-2">
@@ -264,13 +264,13 @@ export default function App() {
             </div>
 
             {state.aiFaction.stratagems.length > 0 && (
-              <div className="mt-4 bg-gray-900 border border-gray-700 rounded-lg p-3">
-                <h3 className="text-sm font-bold text-red-400 mb-2">AI Stratagems</h3>
+              <div className="mt-4 gd-panel rounded-lg p-3">
+                <h3 className="text-sm font-gothic font-bold text-[#a83232] mb-2">AI Stratagems</h3>
                 {state.aiFaction.stratagems.map((s) => (
                   <div key={s.name} className="mb-2 text-xs">
-                    <div className="text-gray-200 font-semibold">{s.name} ({s.cpCost}CP) — {s.type}</div>
-                    <div className="text-gray-500">{s.when}</div>
-                    <div className="text-gray-400">{s.effect}</div>
+                    <div className="gd-parchment font-semibold">{s.name} ({s.cpCost}CP) — {s.type}</div>
+                    <div className="gd-bone opacity-40">{s.when}</div>
+                    <div className="gd-bone opacity-60">{s.effect}</div>
                   </div>
                 ))}
               </div>
@@ -278,7 +278,7 @@ export default function App() {
           </div>
         </div>
 
-        <Suspense fallback={<div className="bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-500 text-sm">Loading stratagems…</div>}>
+        <Suspense fallback={<div className="gd-panel rounded-lg p-3 gd-bone opacity-40 text-sm">Loading stratagems…</div>}>
           <CoreStratagems />
         </Suspense>
 
@@ -288,22 +288,22 @@ export default function App() {
         </div>
 
         {state.mission.scoringRules.length > 0 && (
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-            <h2 className="text-lg font-bold text-amber-400 mb-2">Mission: {state.mission.name}</h2>
-            <p className="text-sm text-gray-400 mb-3">{state.mission.description}</p>
+          <div className="gd-panel-riveted rounded-lg p-4">
+            <h2 className="text-lg font-gothic font-bold gd-gold mb-2">Mission: {state.mission.name}</h2>
+            <p className="text-sm gd-bone opacity-60 mb-3">{state.mission.description}</p>
             <div className="space-y-1">
               {state.mission.scoringRules.map((rule, i) => (
-                <div key={i} className="text-xs text-gray-300 flex gap-2">
-                  <span className="text-amber-500 shrink-0">•</span>
+                <div key={i} className="text-xs gd-parchment flex gap-2">
+                  <span className="gd-gold shrink-0">•</span>
                   <span>{rule}</span>
                 </div>
               ))}
             </div>
             {state.mission.specialRules.length > 0 && (
-              <div className="mt-2 pt-2 border-t border-gray-700 space-y-1">
+              <div className="mt-2 pt-2 border-t border-[#3a3a4a] space-y-1">
                 {state.mission.specialRules.map((rule, i) => (
-                  <div key={i} className="text-xs text-gray-500 flex gap-2">
-                    <span className="text-gray-600 shrink-0">*</span>
+                  <div key={i} className="text-xs gd-bone opacity-40 flex gap-2">
+                    <span className="shrink-0">*</span>
                     <span>{rule}</span>
                   </div>
                 ))}

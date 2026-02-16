@@ -25,24 +25,22 @@ export function UnitCard({
   isOathTarget,
 }: UnitCardProps) {
   const [expanded, setExpanded] = useState(false);
-  const borderColor = isOathTarget
-    ? 'border-red-500 ring-1 ring-red-500/50'
-    : side === 'player' ? 'border-blue-600' : 'border-red-600';
-  const accentColor = side === 'player' ? 'text-blue-400' : 'text-red-400';
+  const cardClass = side === 'player' ? 'gd-card-player' : 'gd-card-ai';
+  const accentColor = side === 'player' ? 'text-[#4a6fa5]' : 'text-[#a83232]';
   const roleColors: Record<string, string> = {
-    aggressive: 'bg-red-900/50 text-red-300',
-    defensive: 'bg-blue-900/50 text-blue-300',
-    flanker: 'bg-purple-900/50 text-purple-300',
-    support: 'bg-green-900/50 text-green-300',
-    objective: 'bg-yellow-900/50 text-yellow-300',
+    aggressive: 'bg-[#8b0000]/30 text-[#cc4444]',
+    defensive: 'bg-[#4a6fa5]/20 text-[#6a9fd5]',
+    flanker: 'bg-purple-900/30 text-purple-300',
+    support: 'bg-emerald-900/30 text-emerald-300',
+    objective: 'bg-[#c9a227]/20 text-[#d4af37]',
   };
 
   if (unitState.isDestroyed) {
     return (
-      <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-3 opacity-50">
+      <div className="gd-panel gd-destroyed rounded-lg p-3">
         <div className="flex justify-between items-center">
-          <span className="text-gray-500 line-through">{unit.name}</span>
-          <span className="text-xs text-red-500 font-bold">DESTROYED</span>
+          <span className="line-through gd-bone opacity-50 font-gothic">{unit.name}</span>
+          <span className="text-xs text-[#cc4444] font-gothic font-bold tracking-wider">DESTROYED</span>
         </div>
       </div>
     );
@@ -50,91 +48,99 @@ export function UnitCard({
 
   if (unitState.inReserve) {
     return (
-      <div className="bg-gray-900 border border-yellow-700 rounded-lg p-3">
+      <div className={`gd-panel gd-reserve ${cardClass} rounded-lg p-3`}>
         <div className="flex justify-between items-center mb-2">
           <div>
-            <h3 className={`font-bold ${accentColor}`}>{unit.name}</h3>
-            <span className="text-xs px-2 py-0.5 rounded bg-yellow-900/50 text-yellow-300">
+            <h3 className={`font-gothic font-bold ${accentColor}`}>{unit.name}</h3>
+            <span className="text-xs px-2 py-0.5 rounded bg-[#4a6fa5]/20 text-[#6a9fd5]">
               IN RESERVES (Deep Strike)
             </span>
           </div>
-          <span className="text-xs text-yellow-400">⏳ Off Table</span>
+          <span className="text-xs gd-gold-dim">⏳ Off Table</span>
         </div>
         {onDeployFromReserve && (
           <button
             onClick={onDeployFromReserve}
-            className="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded transition-colors text-sm"
+            className="w-full gd-deploy-btn py-2 px-4 rounded transition-colors text-sm"
           >
             🪂 Deploy from Reserve
           </button>
         )}
         {!onDeployFromReserve && (
-          <p className="text-xs text-gray-500 italic">Arrives turn 2+. Set up &gt;9&quot; from all enemy models.</p>
+          <p className="text-xs gd-bone opacity-40 italic">Arrives turn 2+. Set up &gt;9&quot; from all enemy models.</p>
         )}
       </div>
     );
   }
 
   return (
-    <div className={`bg-gray-900 border ${borderColor} rounded-lg overflow-hidden`}>
+    <div className={`gd-panel ${cardClass} rounded-lg overflow-hidden ${isOathTarget ? 'gd-oath-glow' : ''} ${unitState.isBattleshocked ? 'gd-battleshock' : ''}`}>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full p-3 text-left hover:bg-gray-800/50 transition-colors"
+        className="w-full p-3 text-left hover:bg-white/[0.03] transition-colors"
       >
         <div className="flex justify-between items-start">
           <div>
-            <h3 className={`font-bold ${accentColor}`}>
-              {isOathTarget && <span className="text-red-400 mr-1" title="Oath of Moment Target">💀</span>}
+            <h3 className={`font-gothic font-bold ${accentColor}`}>
+              {isOathTarget && <span className="text-[#cc4444] mr-1" title="Oath of Moment Target">💀</span>}
               {unit.name}
             </h3>
             <div className="flex gap-2 mt-1 flex-wrap">
-              <span className={`text-xs px-2 py-0.5 rounded ${roleColors[unit.role]}`}>
+              <span className={`gd-badge ${roleColors[unit.role]}`}>
                 {unit.role}
               </span>
               {unitState.isBattleshocked && (
-                <span className="text-xs px-2 py-0.5 rounded bg-yellow-900/50 text-yellow-300">
-                  BATTLESHOCKED
+                <span className="text-xs px-2 py-0.5 rounded bg-yellow-900/30 text-yellow-300 font-bold">
+                  ⚡ BATTLESHOCKED
                 </span>
               )}
               {isOathTarget && (
-                <span className="text-xs px-2 py-0.5 rounded bg-red-900/50 text-red-300">
+                <span className="text-xs px-2 py-0.5 rounded bg-[#8b0000]/30 text-[#cc4444] font-bold">
                   OATH TARGET
                 </span>
               )}
             </div>
           </div>
           <div className="text-right text-sm">
-            <div className="text-gray-400">
+            <div className="gd-bone opacity-60">
               {unit.modelCount > 1
                 ? `${unitState.modelsRemaining}/${unit.modelCount} models`
                 : `${unitState.currentWounds}/${unit.wounds} W`}
             </div>
-            <span className="text-xs text-gray-600">{expanded ? '▲' : '▼'}</span>
+            <span className="text-xs gd-bone opacity-30">{expanded ? '▲' : '▼'}</span>
           </div>
         </div>
       </button>
 
       {expanded && (
-        <div className="border-t border-gray-700 p-3 space-y-3">
-          <div className="grid grid-cols-6 gap-1 text-center text-xs">
-            <div><div className="text-gray-500">M</div><div>{unit.movement}</div></div>
-            <div><div className="text-gray-500">T</div><div>{unit.toughness}</div></div>
-            <div><div className="text-gray-500">Sv</div><div>{unit.save}{unit.invulnSave ? `/${unit.invulnSave}++` : ''}</div></div>
-            <div><div className="text-gray-500">W</div><div>{unit.wounds}</div></div>
-            <div><div className="text-gray-500">Ld</div><div>{unit.leadership}</div></div>
-            <div><div className="text-gray-500">OC</div><div>{unit.oc}</div></div>
+        <div className="border-t border-[#3a3a4a] p-3 space-y-3">
+          {/* Stat block */}
+          <div className="gd-stat-grid rounded overflow-hidden">
+            {[
+              ['M', unit.movement],
+              ['T', unit.toughness],
+              ['Sv', `${unit.save}${unit.invulnSave ? `/${unit.invulnSave}++` : ''}`],
+              ['W', unit.wounds],
+              ['Ld', unit.leadership],
+              ['OC', unit.oc],
+            ].map(([label, value]) => (
+              <div key={label as string} className="gd-stat-cell">
+                <div className="gd-stat-label">{label}</div>
+                <div className="gd-stat-value">{value}</div>
+              </div>
+            ))}
           </div>
 
           <div>
-            <h4 className="text-xs text-gray-500 uppercase mb-1">Weapons</h4>
+            <h4 className="text-xs gd-gold-dim uppercase mb-1 font-gothic tracking-wider">Weapons</h4>
             {unit.weapons.map((w) => (
-              <div key={w.name} className="text-xs bg-gray-800 rounded p-2 mb-1">
-                <div className="font-semibold text-gray-200">{w.name}</div>
-                <div className="text-gray-400">
+              <div key={w.name} className="gd-weapon rounded p-2 mb-1">
+                <div className="font-semibold gd-parchment">{w.name}</div>
+                <div className="gd-bone opacity-60">
                   {w.range} | A{w.attacks} | {w.range === 'Melee' ? `WS${w.skill}` : `BS${w.skill}`} | S{w.strength} | AP{w.ap} | D{w.damage}
                 </div>
                 {w.keywords.length > 0 && (
-                  <div className="text-amber-400 mt-0.5">[{w.keywords.join(', ')}]</div>
+                  <div className="gd-gold mt-0.5">[{w.keywords.join(', ')}]</div>
                 )}
               </div>
             ))}
@@ -142,44 +148,44 @@ export function UnitCard({
 
           {(unit.abilities.length > 0 || unit.coreAbilities.length > 0) && (
             <div>
-              <h4 className="text-xs text-gray-500 uppercase mb-1">Abilities</h4>
+              <h4 className="text-xs gd-gold-dim uppercase mb-1 font-gothic tracking-wider">Abilities</h4>
               {unit.coreAbilities.length > 0 && (
-                <div className="text-xs text-green-400 mb-1">
+                <div className="text-xs text-emerald-400 mb-1">
                   Core: {unit.coreAbilities.join(', ')}
                 </div>
               )}
               {unit.abilities.map((a, i) => (
-                <div key={i} className="text-xs text-gray-300 mb-1">{a}</div>
+                <div key={i} className="text-xs gd-parchment opacity-80 mb-1">{a}</div>
               ))}
             </div>
           )}
 
-          <div className="border-t border-gray-700 pt-2 space-y-2">
-            <h4 className="text-xs text-gray-500 uppercase">Tracking</h4>
+          <div className="border-t border-[#3a3a4a] pt-2 space-y-2">
+            <h4 className="text-xs gd-gold-dim uppercase font-gothic tracking-wider">Tracking</h4>
             {unit.modelCount > 1 ? (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400">Models:</span>
+                <span className="text-xs gd-bone opacity-60">Models:</span>
                 <button
                   onClick={() => onUpdateModels(Math.max(0, unitState.modelsRemaining - 1))}
-                  className="bg-gray-700 hover:bg-gray-600 text-white w-10 h-10 rounded text-sm font-bold"
+                  className="gd-btn w-11 h-11 rounded text-sm font-bold"
                 >-</button>
-                <span className="text-sm font-mono w-8 text-center">{unitState.modelsRemaining}</span>
+                <span className="text-sm font-mono w-8 text-center gd-parchment">{unitState.modelsRemaining}</span>
                 <button
                   onClick={() => onUpdateModels(Math.min(unit.modelCount, unitState.modelsRemaining + 1))}
-                  className="bg-gray-700 hover:bg-gray-600 text-white w-10 h-10 rounded text-sm font-bold"
+                  className="gd-btn w-11 h-11 rounded text-sm font-bold"
                 >+</button>
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400">Wounds:</span>
+                <span className="text-xs gd-bone opacity-60">Wounds:</span>
                 <button
                   onClick={() => onUpdateWounds(Math.max(0, unitState.currentWounds - 1))}
-                  className="bg-gray-700 hover:bg-gray-600 text-white w-10 h-10 rounded text-sm font-bold"
+                  className="gd-btn w-11 h-11 rounded text-sm font-bold"
                 >-</button>
-                <span className="text-sm font-mono w-8 text-center">{unitState.currentWounds}</span>
+                <span className="text-sm font-mono w-8 text-center gd-parchment">{unitState.currentWounds}</span>
                 <button
                   onClick={() => onUpdateWounds(Math.min(unit.wounds, unitState.currentWounds + 1))}
-                  className="bg-gray-700 hover:bg-gray-600 text-white w-10 h-10 rounded text-sm font-bold"
+                  className="gd-btn w-11 h-11 rounded text-sm font-bold"
                 >+</button>
               </div>
             )}
@@ -187,19 +193,19 @@ export function UnitCard({
             <div className="flex gap-2">
               <button
                 onClick={onToggleBattleshock}
-                className={`flex-1 text-xs py-1 px-2 rounded border ${
+                className={`flex-1 text-xs py-2 px-2 rounded border transition-colors ${
                   unitState.isBattleshocked
-                    ? 'border-yellow-500 bg-yellow-900/30 text-yellow-300'
-                    : 'border-gray-600 text-gray-400 hover:border-gray-500'
+                    ? 'border-yellow-500 bg-yellow-900/20 text-yellow-300'
+                    : 'gd-btn'
                 }`}
               >
-                {unitState.isBattleshocked ? 'Clear Battleshock' : 'Battleshock'}
+                {unitState.isBattleshocked ? 'Clear Battleshock' : '⚡ Battleshock'}
               </button>
               <button
                 onClick={onDestroy}
-                className="flex-1 text-xs py-1 px-2 rounded border border-red-800 text-red-400 hover:bg-red-900/30"
+                className="flex-1 text-xs py-2 px-2 rounded gd-btn-danger transition-colors"
               >
-                Destroy Unit
+                ☠ Destroy Unit
               </button>
             </div>
           </div>

@@ -17,9 +17,9 @@ export function GameLog({ entries }: GameLogProps) {
 
   const categoryColor = (cat: string) => {
     switch (cat) {
-      case 'player': return 'text-blue-400';
-      case 'ai': return 'text-red-400';
-      default: return 'text-gray-500';
+      case 'player': return 'text-[#66aaff]';
+      case 'ai': return 'text-[#cc6666]';
+      default: return 'gd-dataslate-dim';
     }
   };
 
@@ -35,28 +35,28 @@ export function GameLog({ entries }: GameLogProps) {
   };
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
+    <div className="gd-dataslate rounded-lg p-4">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between"
       >
-        <h2 className="text-lg font-bold text-amber-400">Battle Log</h2>
-        <span className="text-gray-500 text-xs">{expanded ? '▲' : '▼'} {entries.length} entries</span>
+        <h2 className="text-lg font-gothic font-bold gd-gold tracking-wider">Battle Log</h2>
+        <span className="text-xs gd-dataslate-dim">{expanded ? '▲' : '▼'} {entries.length} entries</span>
       </button>
       {expanded && (
         <div ref={scrollRef} className="mt-2 max-h-64 overflow-y-auto space-y-0.5 text-sm scroll-smooth">
           {entries.length === 0 ? (
-            <p className="text-gray-500 italic">No events yet.</p>
+            <p className="gd-dataslate-dim italic">&gt; Awaiting input...</p>
           ) : (
             entries.map((entry, i) => {
               const isSeparator = entry.message.startsWith('---') || entry.message.startsWith('===');
               return (
                 <div
                   key={i}
-                  className={`${isSeparator ? 'text-amber-500 font-semibold border-t border-gray-800 pt-1 mt-1' : categoryColor(entry.category)}`}
+                  className={`${isSeparator ? 'gd-dataslate-separator font-semibold border-t border-[#2a3a2a] pt-1 mt-1' : categoryColor(entry.category)}`}
                 >
                   {!isSeparator && (
-                    <span className="text-gray-600 text-xs mr-1 font-mono">{categoryPrefix(entry)}</span>
+                    <span className="gd-dataslate-dim text-xs mr-1">{categoryPrefix(entry)}</span>
                   )}
                   {entry.message}
                 </div>
