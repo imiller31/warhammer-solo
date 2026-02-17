@@ -136,7 +136,26 @@ Each unit gets a **role** that determines its behavior:
 - **Offline**: Service worker precaches all assets (8 entries). No CDN dependencies.
 - **Install prompt**: Dismissable "Add to Home Screen" banner, remembers dismissal in localStorage.
 
+### ✅ Grimdark Theme (v2)
+- **Typography**: Google Fonts Cinzel for all headers, unit names, stat labels. Gothic/military feel throughout.
+- **Backgrounds**: Noise grain texture (inline SVG feTurbulence), dark vignette overlay, subtle crimson undertones.
+- **Ambient turn shift**: Background shifts steel blue during player turn, crimson during AI turn (`gd-bg-player-turn` / `gd-bg-ai-turn`).
+- **Decorative CSS elements**: Imperial Aquila dividers (angular wing motifs with diamond centerpiece), corner ornaments on major panels, section dividers, worn edge shadows. All pure CSS, no images.
+- **Panels**: Gunmetal gradients (#1a1a2e → #16213e), riveted borders, metallic box-shadows.
+- **Buttons**: Weathered metal gradients with inner shadows. Gold variant for primary actions. Danger red for destructive actions.
+- **Unit cards**: Faction-colored 4px top border (steel blue / crimson). Hexagonal role badges via clip-path. Oath target gets dramatic red glow. Destroyed units scorched/desaturated. Reserve units holographic blue glow.
+- **Stat blocks**: Double-bordered datasheet stamp grid. Weapon readouts in monospace with gold separators.
+- **Dice roller**: 3D dice with layered box-shadows. Crits get golden radial glow. Fails get cracked red styling. Roll button has shake animation.
+- **Game log**: CRT data-slate (monospace, green text-shadow, repeating-linear-gradient scan lines, subtle 8s flicker animation, `>` prompt prefix).
+- **ScoreBoard**: Large brass VP numerals in Cinzel. CP as ammo counters with faction-colored glow.
+- **Phase tracker**: Cogitator style with clip-path angular shape, status light dots, holo-readout monospace labels.
+- **Setup screen**: Pulsing golden title glow, Aquila watermark, heavy metallic "Begin Battle" button.
+- **Game over**: Epic pulse animation.
+- **Animations**: Battleshock pulse (2s), deploy button pulse (1.5s), card expand slide-in. All transitions 0.2-0.3s ease.
+- **951 lines of custom CSS** in index.css. Zero external image assets.
+
 ### 🔲 Not Yet Implemented
 - Turn timer or phase auto-advance
 - Additional factions beyond SM/Tyranids
 - Mission-specific scoring automation
+- GitHub Pages / Vercel deployment
